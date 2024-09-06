@@ -19,9 +19,8 @@ class ServisesApp extends AbstractApp
         $this->companyId = $params[0];
         $this->startDate = $params[1] . '-01';
         $this->endDate = $this->lastDay($params[2] . "-01"); //2024-06-30
+        $this->startDate2 = str_replace('-', '', $this->startDate); // 20230701
         $this->endDate2 = str_replace('-', '', $params[2]) . "01"; // 20240601
-        $this->initWeek2Month();
-//        print_r($this->week2Month);
     }
 
     public function run(): void
@@ -29,16 +28,17 @@ class ServisesApp extends AbstractApp
         if (file_exists($this->cache)) {
             $this->result = unserialize(file_get_contents($this->cache));
         } else {
-            $this->result['ЛК'] = $this->getCountConsultLine();
-            $this->result['семинары'] = $this->getCountSeminars();
-            $this->result['КПК'] = $this->getCountUpCourses();
-            $this->result['Обученные пользователи'] = $this->getTrainedUsers();
-//            $this->result['системы'] = $this->getSystemsUsing();
+            $this->result['услуги'] = [
+                'ЛК' => $this->getCountConsultLine(),
+                'семинары' => $this->getCountSeminars(),
+                'КПК' => $this->getCountUpCourses(),
+                'Обученные пользователи' => $this->getTrainedUsers(),
+            ];
+            $this->result['системы'] = $this->getSystemsUsing();
             file_put_contents($this->cache, serialize($this->result));
         }
-        $this->result['системы'] = $this->getSystemsUsing();
-
-//        print_r($this->result);
+//        $this->result['системы'] = $this->getSystemsUsing();
+        $this->log(print_r($this->result, 1));
     }
 
     private function getCountConsultLine(): array
@@ -252,7 +252,7 @@ class ServisesApp extends AbstractApp
     {
         $start = str_replace('-', '', $this->startDate);
         $sql = <<<SQL
-            declare @date1 date = '$start',
+            declare @date1 date = '$this->startDate2',
             @date2 date = '$this->endDate2' declare @cnt_week int
             SET
             	@cnt_week = DATEDIFF(
@@ -288,42 +288,51 @@ class ServisesApp extends AbstractApp
             	t1.NumWeek,
             	t1.IdeProdukt			
         SQL;
-        $cache = $this->cache . '_5';
-        if (file_exists($cache)) {
-            $res = unserialize(file_get_contents($cache));
-        } else {
-            $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-            file_put_contents($cache, serialize($res));
-        }
+//        $cache = $this->cache . '_5';
+//        if (file_exists($cache)) {
+//            $res = unserialize(file_get_contents($cache));
+//        } else {
+//            $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+//            file_put_contents($cache, serialize($res));
+//        }
+        $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+//        $cache = $this->cache . '_5';
+//        $res = unserialize(file_get_contents($cache));
 //        $this->log(print_r($res, 1));
-        $this->compactMonth($this->compactSystems($res));
-        return [];
+
+        $this->initWeek2Month();
+//        print_r($this->week2Month);
+
+        return $this->compactWeeks($this->compactSystems($res));
     }
 
+    // мапим недели на месяцы
     private function initWeek2Month(): void
     {
         $week = 7 * 24 * 3600;
         $week05 = $week % 2;
-        $start = strtotime($this->startDate);
-        $end = strtotime($this->endDate) + $week;
-        for ($time = $start - $week; $time <= $end; $time += $week) {
+        $start = strtotime($this->startDate) - 2 * $week; // диапазон расширяем на +- 2 недели
+        $end = strtotime($this->endDate) + 2 * $week;
+        for ($time = $start; $time <= $end; $time += $week) {
             $this->week2Month[date('Y-W', $time)] = date('Y-m', $time + $week05); //$week05 - сдвиг
         }
-        $this->log(print_r($this->week2Month, 1));
+//        $this->log(print_r($this->week2Month, 1));
     }
 
+    // собираем данные по системам
     private function compactSystems(array $rowData): array
     {
         foreach ($rowData as $el) {
             $prodKey = sprintf('%s|%s|%s', $el['IdeProdukt'], $el['IdeTechType'], $el['IdeVer']);
-            $yearWeek = sprintf('%4s-%02s', $el['NumYear'],$el['NumWeek']);
+            $yearWeek = sprintf('%4s-%02s', $el['NumYear'], $el['NumWeek']);
             $compact[$prodKey][$yearWeek] = $el['cnt'];
         }
-        $this->log(print_r($compact, 1));
+//        $this->log(print_r($compact, 1));
         return $compact;
     }
 
-    private function compactMonth(array $weekData): array
+    // собираем недели в месяцы
+    private function compactWeeks(array $weekData): array
     {
         $result = [];
         foreach ($weekData as $prod => $weeks) {
@@ -332,7 +341,7 @@ class ServisesApp extends AbstractApp
                 $result[$prod][$this->week2Month[$week]] += $cnt;
             }
         }
-        $this->log(print_r($result, 1));
+//        $this->log(print_r($result, 1));
         return $result;
     }
 }

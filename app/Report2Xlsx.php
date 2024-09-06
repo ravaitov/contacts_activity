@@ -18,7 +18,6 @@ class Report2Xlsx extends AbstractApp
     private int $currentRow = 2;
     private string $endCol = 'M';
     private int $titleRow = 4;
-    private string $statusField = 'UF_CRM_1524464429';
     private array $statusMap;
     private string $fileName;
     private array $styles;
@@ -33,15 +32,15 @@ class Report2Xlsx extends AbstractApp
         Logger::instance()->echoLog = false;
         parent::__construct('Экспорт в xslx');
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $this->spreadSheet = $reader->load($this->config->conf('tst_xlsx3'));
+        $this->spreadSheet = $reader->load($this->config->conf('xslx_tmpl'));
 
-        $this->sheet = $this->spreadSheet->getSheetByName('info');
+        $this->sheet = $this->spreadSheet->getSheetByName('данные');
         $this->templateSheet = $this->spreadSheet->getSheetByName('tmpl');
 
-        $this->addStyle('h1', 'A1');
-        $this->addStyle('h2', 'A2');
-        $this->addStyle('h4', 'A4');
-        $this->addStyle('norm', 'A6');
+        $this->addStyle('c_bold', 'A1');
+        $this->addStyle('l_bold', 'A2');
+        $this->addStyle('c_norm', 'A3');
+        $this->addStyle('l_norm', 'B3');
 
 //        $this->sheet->getStyle('A1:K40')->getAlignment()->setWrapText(true);
 

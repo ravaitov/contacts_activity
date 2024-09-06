@@ -29,3 +29,4 @@ if (!$app) {
 
 $app->prepare(array_slice($argv, 2));
 $app->run();
+
