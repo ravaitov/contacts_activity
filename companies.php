@@ -3,18 +3,23 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Logger\Logger;
 
-Logger::instance()->echoLog = false;
-
-
 try {
-    $app = new App\ServisesApp;
+    $app = new App\CompanyList();
 } catch (Throwable $t) {
     terminateError($t);
 }
 
 try {
-    $app->prepare([$_GET['id'], $_GET['start'], $_GET['end']]);
     $app->run();
+    $i = 0;
+    foreach ($app->result as $name => $id) {
+        $i++;
+        echo "<tr>\n";
+        echo "<td>$i</td>";
+        echo "<td><a onClick=\"jump('$id'); return false;\" >$name</a></td>";
+        echo "<td>$id</td>";
+        echo "</tr>\n";
+    }
 } catch (Throwable $t) {
     terminateError($t);
 }

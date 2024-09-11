@@ -12,15 +12,19 @@ class ServisesApp extends AbstractApp
 
     private string $cache;
     private array $week2Month;
+    private bool $send = true;
 
     public function prepare(array $params = []): void
     {
-        $this->cache = $this->config->conf('stor_dir') . implode('_', $params);
+        $this->log('params = ' . implode(', ', $params));
+        $this->cache = $this->config->conf('stor_dir') . implode('_', array_slice($params, 0, 3));
         $this->companyId = $params[0];
         $this->startDate = $params[1] . '-01';
-        $this->endDate = $this->lastDay($params[2] . "-01"); //2024-06-30
+        $this->endDate = $this->lastDay($params[2] . "-01", ''); //2024-06-30
         $this->startDate2 = str_replace('-', '', $this->startDate); // 20230701
         $this->endDate2 = str_replace('-', '', $params[2]) . "01"; // 20240601
+        $this->send = empty($params[3]);
+
     }
 
     public function run(): void
@@ -35,10 +39,18 @@ class ServisesApp extends AbstractApp
                 'Обученные пользователи' => $this->getTrainedUsers(),
             ];
             $this->result['системы'] = $this->getSystemsUsing();
+            $this->result['компания'] = $this->getTitle();
             file_put_contents($this->cache, serialize($this->result));
         }
-//        $this->result['системы'] = $this->getSystemsUsing();
-        $this->log(print_r($this->result, 1));
+        $this->result['company_id'] = $this->companyId;
+        $this->result['file_name'] = $this->companyId . '_' . $this->startDate . '_' . $this->endDate;
+        $this->result['period'] = [explode('-', $this->startDate), explode('-', $this->endDate)];
+        $this->result['send'] = $this->send;
+//        $this->log(print_r($this->result, 1));
+        $xlsx = new Report2Xlsx;
+        $xlsx->prepare($this->result);
+        $xlsx->run();
+        $xlsx->finish();
     }
 
     private function getCountConsultLine(): array
@@ -343,5 +355,11 @@ class ServisesApp extends AbstractApp
         }
 //        $this->log(print_r($result, 1));
         return $result;
+    }
+
+    private function getTitle(): string
+    {
+        $res = $this->baseMs->query('SELECT NamOrg FROM Org WHERE Num_1 = ' . $this->companyId);
+        return $res->fetchAll()[0][0] ?? '';
     }
 }

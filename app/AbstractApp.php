@@ -57,9 +57,9 @@ class AbstractApp
         return $this->status;
     }
 
-    protected function lastDay(string $date): string
+    protected function lastDay(string $date, string $suffix = ' 23:59:59'): string
     {
-        return date('Y-m-t 23:59:59', strtotime($date));
+        return date('Y-m-t' . $suffix, strtotime($date));
     }
 
     protected function validate(): void

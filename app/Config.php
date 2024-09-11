@@ -105,7 +105,7 @@ class Config
             $this->conf['log_dir'] = realpath(__DIR__ . '/../log/') . DIRECTORY_SEPARATOR;
             $this->conf['log_file'] = $this->conf['log_dir'] . 'log_%s.txt';
             $this->conf['stor_dir'] = realpath(__DIR__ . '/../storage/') . DIRECTORY_SEPARATOR;
-            $this->conf['xslx_tmpl'] = $this->conf['stor_dir'] . 'xslsx/tmpl.xlsx';
+            $this->conf['xlsx_tmpl'] = $this->conf['stor_dir'] . 'xlsx/tmpl.xlsx';
         } catch (\Throwable $t) {
             throw new \Exception("Config init error! " . $t->getMessage());
         }
