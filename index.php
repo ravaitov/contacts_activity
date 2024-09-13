@@ -1,28 +1,16 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
+//$currentSessionName = 'usersActivity';
+//if (session_name() !== $currentSessionName) session_name($currentSessionName);
+//session_start();
+//require_once 'constants.php';
+//require_once $_SERVER['DOCUMENT_ROOT'] . "/library/technical_service.php";
+//require_once $_SERVER['DOCUMENT_ROOT'] . "/luna/php_scripts/luna_pdo_connection.php";
+//$luna = new \library\dataBase\dataBase($lunaPDO);
+//$obToken = new \library\bitrixRestApi\SetToken(...TOKEN_PARAMETERS_ARRAY);
 
-use App\Logger\Logger;
+/** используй чтобы обновить токен в БД */
+//$obToken->insertTokenDataToDatabase($luna);
 
-Logger::instance()->echoLog = false;
-
-
-try {
-    $app = new App\ServisesApp;
-} catch (Throwable $t) {
-    terminateError($t);
-}
-
-try {
-    $app->prepare([$_GET['id'], $_GET['start'], $_GET['end']]);
-    $app->run();
-} catch (Throwable $t) {
-    terminateError($t);
-}
-
-function terminateError(Throwable $t): void
-{
-    Logger::instance()->log("!!! Error: " . $t->getMessage());
-    http_response_code(400);
-    echo '{"error": "'. $t->getMessage().'"}';
-    exit();
-}
+require_once 'header.html';
+require_once 'body.php';
+require_once 'footer.html';
