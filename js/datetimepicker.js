@@ -11,6 +11,8 @@ function renderDatetimepicker() {
         },
         defaultDate: d
     });
+    d = new Date();
+    d = d.setMonth(d.getMonth() - 1);
     $('#datetimepicker1').datetimepicker({
         format: 'YYYY-MM',
         locale: 'ru',
@@ -19,6 +21,6 @@ function renderDatetimepicker() {
         icons: {
             today: 'today-button-pf'
         },
-        defaultDate: new Date()
+        defaultDate: d
     });
 }

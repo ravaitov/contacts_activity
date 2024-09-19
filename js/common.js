@@ -52,7 +52,7 @@ function alertWarnings(result) {
 
 function alertErrors(message, errorData, text = false, data = false) {
     alert(message);
-    alert(message);
+    alert(errorData);
     console.log('\nJSON.parse(answer) returned an error: ');
     console.dir(errorData);
     if (text) console.log(text);

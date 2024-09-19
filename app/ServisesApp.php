@@ -280,7 +280,7 @@ class ServisesApp extends AbstractApp
             	t1.IdeVer,
             	t1.NumWeek,
             	t1.NumYear,
-            	COUNT(t1.IDDis) AS cnt
+            	COUNT(t1.CountSessions) AS cnt
             FROM
             	##tmp_usr122_OV_OVM_T1 as t1
             	INNER JOIN RClient4.dbo.Org AS o ON o.NamOrg = t1.NamOrgTO COLLATE Cyrillic_General_CI_AS
@@ -297,8 +297,7 @@ class ServisesApp extends AbstractApp
             	t1.NumYear
             ORDER BY
             	t1.NumYear,
-            	t1.NumWeek,
-            	t1.IdeProdukt			
+            	t1.NumWeek
         SQL;
 //        $cache = $this->cache . '_5';
 //        if (file_exists($cache)) {
