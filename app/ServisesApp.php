@@ -327,7 +327,7 @@ class ServisesApp extends AbstractApp
         for ($time = $start; $time <= $end; $time += $week) {
             $this->week2Month[date('Y-W', $time)] = date('Y-m', $time + $week05); //$week05 - сдвиг
         }
-//        $this->log(print_r($this->week2Month, 1));
+        $this->log(print_r($this->week2Month, 1));
     }
 
     // собираем данные по системам
