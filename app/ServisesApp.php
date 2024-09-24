@@ -264,40 +264,18 @@ class ServisesApp extends AbstractApp
     {
         $start = str_replace('-', '', $this->startDate);
         $sql = <<<SQL
-            declare @date1 date = '$this->startDate2',
-            @date2 date = '$this->endDate2' declare @cnt_week int
-            SET
-            	@cnt_week = DATEDIFF(
-            		week,
-            		@date1,
-            		EOMONTH(@date2)
-            	) SET NOCOUNT ON ; EXEC SP_Otchet_USR122_OV_OVM_T1 @CountWeeks = @cnt_week,
-            	@sDOkon = @date2
             SELECT
-            	o.Num_1,
-            	t1.IdeProdukt,
-            	stt.IdeTechType,
-            	t1.IdeVer,
-            	t1.NumWeek,
-            	t1.NumYear,
-            	COUNT(t1.CountSessions) AS cnt
+            	IdeProdukt,
+            	IdeTechType,
+            	IdeVer,
+            	NumWeek,
+            	NumYear,
+            	cnt
             FROM
-            	##tmp_usr122_OV_OVM_T1 as t1
-            	INNER JOIN RClient4.dbo.Org AS o ON o.NamOrg = t1.NamOrgTO COLLATE Cyrillic_General_CI_AS
-            	LEFT JOIN RClient4.dbo.SprTechType AS stt ON stt.KodTechType = t1.KodTechType
-            WHERE
-            	Activity = '1'
-            	AND o.Num_1 = $this->companyId
-            GROUP BY
-            	o.Num_1,
-            	t1.IdeProdukt,
-            	stt.IdeTechType,
-            	t1.IdeVer,
-            	t1.NumWeek,
-            	t1.NumYear
+            	[dbo].[uf_ric037_year_report_company_b24]($this->companyId, '$this->startDate2', '$this->endDate2')
             ORDER BY
-            	t1.NumYear,
-            	t1.NumWeek
+            	NumYear,
+            	NumWeek			
         SQL;
 //        $cache = $this->cache . '_5';
 //        if (file_exists($cache)) {
@@ -307,6 +285,7 @@ class ServisesApp extends AbstractApp
 //            file_put_contents($cache, serialize($res));
 //        }
         $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+//        $this->log(print_r($res, 1));
 //        $cache = $this->cache . '_5';
 //        $res = unserialize(file_get_contents($cache));
 //        $this->log(print_r($res, 1));
@@ -327,7 +306,7 @@ class ServisesApp extends AbstractApp
         for ($time = $start; $time <= $end; $time += $week) {
             $this->week2Month[date('Y-W', $time)] = date('Y-m', $time + $week05); //$week05 - сдвиг
         }
-        $this->log(print_r($this->week2Month, 1));
+//        $this->log(print_r($this->week2Month, 1));
     }
 
     // собираем данные по системам
@@ -335,7 +314,7 @@ class ServisesApp extends AbstractApp
     {
         foreach ($rowData as $el) {
             $prodKey = sprintf('%s|%s|%s', $el['IdeProdukt'], $el['IdeTechType'], $el['IdeVer']);
-            $yearWeek = sprintf('%4s-%02s', $el['NumYear'], $el['NumWeek']);
+            $yearWeek = sprintf('%4s-%02s', '20' . $el['NumYear'], $el['NumWeek']);
             $compact[$prodKey][$yearWeek] = $el['cnt'];
         }
 //        $this->log(print_r($compact, 1));
