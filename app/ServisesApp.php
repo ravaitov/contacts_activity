@@ -277,21 +277,9 @@ class ServisesApp extends AbstractApp
             	NumYear,
             	NumWeek			
         SQL;
-//        $cache = $this->cache . '_5';
-//        if (file_exists($cache)) {
-//            $res = unserialize(file_get_contents($cache));
-//        } else {
-//            $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-//            file_put_contents($cache, serialize($res));
-//        }
         $res = $this->baseMs->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-//        $this->log(print_r($res, 1));
-//        $cache = $this->cache . '_5';
-//        $res = unserialize(file_get_contents($cache));
-//        $this->log(print_r($res, 1));
 
         $this->initWeek2Month();
-//        print_r($this->week2Month);
 
         return $this->compactWeeks($this->compactSystems($res));
     }
@@ -306,7 +294,6 @@ class ServisesApp extends AbstractApp
         for ($time = $start; $time <= $end; $time += $week) {
             $this->week2Month[date('Y-W', $time)] = date('Y-m', $time + $week05); //$week05 - сдвиг
         }
-//        $this->log(print_r($this->week2Month, 1));
     }
 
     // собираем данные по системам
@@ -317,7 +304,6 @@ class ServisesApp extends AbstractApp
             $yearWeek = sprintf('%4s-%02s', '20' . $el['NumYear'], $el['NumWeek']);
             $compact[$prodKey][$yearWeek] = $el['cnt'];
         }
-//        $this->log(print_r($compact, 1));
         return $compact;
     }
 
@@ -331,7 +317,6 @@ class ServisesApp extends AbstractApp
                 $result[$prod][$this->week2Month[$week]] += $cnt;
             }
         }
-//        $this->log(print_r($result, 1));
         return $result;
     }
 
