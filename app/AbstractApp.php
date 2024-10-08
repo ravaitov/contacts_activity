@@ -28,7 +28,7 @@ class AbstractApp
         $this->config->setParam('app_name', $this->appName);
         $this->logger = Logger::instance();
         $this->log(">>> Старт: " . $this->appName . '. V=' . $this->config->conf('version'));
-        $this->baseReport = new DataBase('db_report');
+//        $this->baseReport = new DataBase('db_report');
         $this->baseB24 = new DataBase('db_b24');
         $this->baseMs = new DataBaseMs('db_ms');
         $this->baseMs->handle()->setAttribute(PDO::SQLSRV_ATTR_DIRECT_QUERY, true);
@@ -43,7 +43,7 @@ class AbstractApp
     {
     }
 
-        public function prepare(array $params = []): void
+    public function prepare(array $params = []): void
     {
     }
 

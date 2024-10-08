@@ -78,15 +78,15 @@ thead th {
 }
 
 .table {
-    width: 100%;
+    width: 150%;
     border: none;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
 }
 .table thead th {
     font-weight: bold;
     text-align: left;
     border: none;
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     background: #d8d8d8;
     font-size: 14px;
     border-left: 1px solid #ddd;
@@ -95,7 +95,7 @@ thead th {
 .table tbody td {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     font-size: 14px;
     vertical-align: top;
 }
@@ -105,9 +105,9 @@ thead th {
 .table tbody tr:nth-child(even){
     background: #f3f3f3;
 }
-.table tbody tr td:nth-child(even) {
-    text-align: left !important;
-}
-.table tbody tr td:nth-child(odd) {
-    text-align: right !important;
-}
+/*.table tbody tr td:nth-child(even) {*/
+/*    text-align: left !important;*/
+/*}*/
+/*.table tbody tr td:nth-child(odd) {*/
+/*    text-align: right !important;*/
+/*}*/
