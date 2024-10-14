@@ -3,6 +3,7 @@
 namespace App;
 
 use PDO;
+use \App\Presenters\WebPresenter;
 
 class TestApp extends AbstractApp
 {
@@ -13,7 +14,13 @@ class TestApp extends AbstractApp
 
     public function run(): void
     {
-        $this->log(print_r($this->getCountConsultLine(1055, '2023-07', '2024-06')));
+//        $this->log(print_r($this->getCountConsultLine(1055, '2023-07', '2024-06')));
+        $pt = new PivotTable();
+        $pt->run();
+//        print_r($pt->result);
+//        exit();
+        $wr = new WebPresenter($pt->result);
+        print_r($wr->sendTable());
     }
 
     private function getCountConsultLine(int $companyId, string $start, string $end): array

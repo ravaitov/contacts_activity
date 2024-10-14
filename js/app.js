@@ -7,7 +7,7 @@ function send() {
     preloaderSwitch('on');
     $.ajax({
         type: "POST",
-        url: "companies.php",
+        url: "table.php",
         dataType: 'text',
         data: {
             "week": document.querySelector('#weekpicker').value,

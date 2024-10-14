@@ -4,7 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use App\Logger\Logger;
 
 try {
-    $app = new App\CompanyList();
+    $app = new App\CompanyName();
 } catch (Throwable $t) {
     terminateError($t);
 }

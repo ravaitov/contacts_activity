@@ -4,7 +4,7 @@ namespace App;
 
 use PDO;
 
-class CompanyList extends AbstractApp
+class CompanyName extends AbstractApp
 {
     public function run(): void
     {
@@ -22,7 +22,7 @@ class CompanyList extends AbstractApp
         SQL;
         $res = $this->baseB24->query($sql)->fetchAll(PDO::FETCH_NUM);
         foreach ($res as $el) {
-            $this->result[$el[0]] = $el[1];
+            $this->result[$el[1]] = $el[0];
         }
 //        print_r($this->result);
     }

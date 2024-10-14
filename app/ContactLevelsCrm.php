@@ -2,12 +2,10 @@
 
 namespace App;
 
-class ContactLevels extends AbstractApp
+class ContactLevelsCrm extends AbstractApp
 {
-    private array $levels;
     private array $influenceLevelNames;
     private array $usageLevelNames;
-    private array $responsibleNames;
 
     public array $users;
 
@@ -18,6 +16,7 @@ class ContactLevels extends AbstractApp
         $this->getUserLevelNames();
         $this->getUsers();
         $this->formContacts();
+//        print_r($this->result);
 //        foreach (($this->result) as $id => $el) {
 //            if (empty($el['usage_level']) || empty($el['influence_level'])) {
 //                $this->log(print_r($el, 1));
@@ -34,6 +33,7 @@ class ContactLevels extends AbstractApp
             SELECT
             	con.ID contact_id,
             	ASSIGNED_BY_ID responsible_id,
+            	CONCAT(IFNULL(LAST_NAME, ''), ' ',  NAME, ' ', IFNULL(SECOND_NAME, '')) name,
             	ucon.UF_CRM_1524141984 influence_level_id, -- Уровень влияния
             	ucon.UF_CRM_1551781165 usage_level_id -- Уровень использования К+ 
             FROM
@@ -49,6 +49,7 @@ class ContactLevels extends AbstractApp
                 'responsible_id' => $el['responsible_id'],
                 'influence_level_id' => $el['influence_level_id'],
                 'usage_level_id' => $el['usage_level_id'],
+                'name' => $el['name'],
             ];
         }
     }
@@ -126,7 +127,6 @@ class ContactLevels extends AbstractApp
             $el['usage_level'] = $this->usageLevelNames[$el['usage_level_id']];
             $el['influence_level'] = $this->influenceLevelNames[$el['influence_level_id']] ?? '';
             $el['responsible'] = $this->users[$el['responsible_id']] ?? '';
-
         }
     }
 }

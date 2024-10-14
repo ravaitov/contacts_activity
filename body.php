@@ -29,17 +29,6 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Компания</th>
-            <th>Активность</th>
-            <th>Контакт</th>
-            <th>Ключевой?</th>
-            <th>36</th>
-            <th>37</th>
-            <th>38</th>
-            <th>39</th>
-            <th>40</th>
-            <th>50</th>
-            <th>51</th>
         </tr>
         </thead>
         <tbody></tbody>

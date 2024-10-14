@@ -2,7 +2,7 @@
 
 namespace App;
 
-class ContactDisList extends AbstractApp
+class ManagerDisList90 extends AbstractApp
 {
     public function run(): void
     {
@@ -10,9 +10,7 @@ class ContactDisList extends AbstractApp
             SELECT
             	iep2.VALUE AS company_id,
             	iep3.VALUE AS contact_id,
-            	iep4.VALUE AS responsible_id,
-            	iep5.VALUE AS sds_id,
-            	iep6.VALUE AS transfer_date
+            	iep5.VALUE AS sds_id
             FROM
             	b_iblock_element ie
             
@@ -26,14 +24,8 @@ class ContactDisList extends AbstractApp
             	INNER JOIN b_iblock_element_property iep3 ON iep3.IBLOCK_ELEMENT_ID = ie.ID
             	AND iep3.IBLOCK_PROPERTY_ID = 653 -- Контакт
             
-            	INNER JOIN b_iblock_element_property iep4 ON iep4.IBLOCK_ELEMENT_ID = ie.ID
-            	AND iep4.IBLOCK_PROPERTY_ID = 1284 -- Ответственный
-            
             	INNER JOIN b_iblock_element_property iep5 ON iep5.IBLOCK_ELEMENT_ID = ie.ID
             	AND iep5.IBLOCK_PROPERTY_ID = 1286 -- СДС
-            
-            	LEFT JOIN b_iblock_element_property iep6 ON iep6.IBLOCK_ELEMENT_ID = ie.ID
-            	AND iep6.IBLOCK_PROPERTY_ID = 655 -- Когда передан
             
             WHERE ie.IBLOCK_ID = 90	
         SQL;
@@ -41,8 +33,8 @@ class ContactDisList extends AbstractApp
         foreach ($res as $el) {
             if (empty($el['company_id']) || empty($el['contact_id']))
                 continue;
-            $this->result[$el['company_id']][$el['contact_id']] = [$el['responsible_id'], $el['sds_id']];
+            $this->result[$el['company_id']][$el['contact_id']] = $el['sds_id'];
         }
-        print_r($this->result);
+//        print_r($this->result);
     }
 }
