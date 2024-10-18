@@ -7,6 +7,7 @@ class PivotTable extends AbstractApp
     private ContactComplect234 $contactComplect234;
     private ManagerDisList90 $contactDisList90;
     private ContactLevelsCrm $contactLevelsCrm;
+    private InputsData $inputsData;
     private CompanyName $companyList;
     private UserName $userList;
 
@@ -16,6 +17,7 @@ class PivotTable extends AbstractApp
         $this->contactComplect234 = new ContactComplect234();
         $this->contactDisList90 = new ManagerDisList90();
         $this->contactLevelsCrm = new ContactLevelsCrm();
+        $this->inputsData = new InputsData();
         $this->companyList = new CompanyName();
         $this->userList = new UserName();
     }
@@ -25,6 +27,7 @@ class PivotTable extends AbstractApp
         $this->contactDisList90->run();
         $this->contactLevelsCrm->run();
         $this->contactComplect234->run();
+        $this->inputsData->run();
         $this->userList->run();
         $this->companyList->run();
 
@@ -33,7 +36,7 @@ class PivotTable extends AbstractApp
                 if (empty($this->contactLevelsCrm->result[$contact]))
                     continue;
                 $manager = $this->contactDisList90->result[$company][$contact];
-                $this->result["$company|$contact"] = [
+                $data["$company|$contact"] = [
                     'company' => $this->companyList->result[$company] ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>",
                     'contact' => $this->contactLevelsCrm->result[$contact]['name'],
                     'manager' => $this->userList->result[$manager],
@@ -44,7 +47,13 @@ class PivotTable extends AbstractApp
                 ];
             }
         }
-        usort($this->result, fn($a, $b) => $a['manager'] <=> $b['manager']);
+        usort($data, fn($a, $b) => $a['manager'] <=> $b['manager']);
+        $this->result = ['data' =>  $data, 'weeks' => $this->inputsData->weekList()];
 //        print_r($this->result);
+    }
+
+    private function productResult(int $company, int $contact): array
+    {
+        
     }
 }

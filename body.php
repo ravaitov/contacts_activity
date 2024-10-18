@@ -28,7 +28,7 @@
     <table class="table" id="table1">
         <thead>
         <tr>
-            <th>#</th>
+            <th rowspan='3'>#</th>
         </tr>
         </thead>
         <tbody></tbody>

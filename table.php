@@ -7,7 +7,7 @@ use App\Presenters\WebPresenter;
 
 try {
     Logger::instance()->log(print_r($_POST, 1));
-    (new \App\InputsData())->run();
+//    (new \App\InputsData())->run();
     $pt = new PivotTable();
     $pt->run();
     $wr = new WebPresenter($pt->result);

@@ -68,23 +68,34 @@
     overflow: auto;
 }
 thead th {
+    position: -webkit-sticky;
+    padding: 3px;
+    /*background: rgb(211, 211, 211);*/
+}
+
+thead {
     position: sticky;
     top: 0;
-    background: rgb(211, 211, 211);
 }
+
+th:first-child {
+    left: 0;
+    z-index: 1;
+}
+
 .row {
     display: flex;
     align-items: flex-end;
 }
 
 .table {
-    width: 150%;
+    width: 100%;
     border: none;
     /*margin-bottom: 20px;*/
 }
 .table thead th {
     font-weight: bold;
-    text-align: left;
+    text-align: center;
     border: none;
     /*padding: 10px 15px;*/
     background: #d8d8d8;

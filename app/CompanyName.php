@@ -22,7 +22,7 @@ class CompanyName extends AbstractApp
         SQL;
         $res = $this->baseB24->query($sql)->fetchAll(PDO::FETCH_NUM);
         foreach ($res as $el) {
-            $this->result[$el[1]] = $el[0];
+            $this->result[$el[1]] = $el[0] . " ($el[1])"; //debug!
         }
 //        print_r($this->result);
     }
