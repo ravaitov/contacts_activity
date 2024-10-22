@@ -20,6 +20,6 @@ function terminateError(Throwable $t): void
 {
     Logger::instance()->log("!!! Error: " . $t->getMessage());
     http_response_code(400);
-    echo '{"error": "'. $t->getMessage().'"}';
+    echo $t->getMessage();
     exit();
 }

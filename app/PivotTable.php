@@ -42,18 +42,31 @@ class PivotTable extends AbstractApp
                     'manager' => $this->userList->result[$manager],
                     'usage_level' => $this->contactLevelsCrm->result[$contact]['usage_level'],
                     'influence_level' => $this->contactLevelsCrm->result[$contact]['influence_level'],
-                    'products' => $this->contactComplect234->result[$company][$contact] ?? [$this->contactComplect234->fillProduct()],
-                    '#id' => [$company, $contact, $manager],
+                    'products' => $this->productResult($company, $contact),
+//                    '#id' => [$company, $contact, $manager],
                 ];
             }
         }
         usort($data, fn($a, $b) => $a['manager'] <=> $b['manager']);
         $this->result = ['data' =>  $data, 'weeks' => $this->inputsData->weekList()];
-//        print_r($this->result);
+//        $this->log(print_r($this->result,1));
     }
 
     private function productResult(int $company, int $contact): array
     {
-        
+        $result = $this->contactComplect234->result[$company][$contact] ?? [$this->contactComplect234->fillProduct()];
+        foreach ($result as &$prod) {
+            $weekData = $this->inputsData->weeksInputs(
+                $company,
+                $prod['ide_product'] ?? '',
+                $prod['complect'] ?? '',
+                $prod['tech_type'] ?? '',
+                $prod['login'] ?? '',
+                $prod['fio4ois'] ?? '',
+            );
+            $prod = array_values(array_merge($prod, $weekData));
+        }
+
+        return $result;
     }
 }

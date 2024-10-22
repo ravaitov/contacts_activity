@@ -6,17 +6,17 @@ use App\Logger\Logger;
 
 class AbstractPresenter
 {
-    protected array $fieldMapper = [
+    protected array $fieldMapper = [ // порядок важен!
         'company' => 'Компания',
         'contact' => 'Контакт',
         'manager' => 'Менеджер',
         'usage_level' => 'Уровень использования К+',
         'influence_level' => 'Уровень влияния',
-        'products' => '',
+//        'products' => '',
         'ide_product' => 'Сокращенное название',
         'complect' => 'Комплект',
         'version' => 'Версия',
-        'net_type' => 'Сетевитость',
+//        'net_type' => 'Сетевитость',
         'tech_type' => 'Тех. тип',
         'login' => 'Логин (онлайн)',
         'fio4ois' => 'ФИО (для ОИС)',

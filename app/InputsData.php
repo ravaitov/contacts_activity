@@ -9,6 +9,19 @@ class InputsData extends AbstractApp
     private int $weekCnt;
     private string $date;
 
+    private int $company;
+    private string $prodName;
+    private string $complect;
+    private string $techType;
+    private string $login;
+    private string $fioOv;
+
+    private array $current;
+    private array $data;
+
+    private string $noLogin = 'н/и';
+    private string $noLogin2 = 'н/и КЦ';
+
     public function run(): void
     {
         $this->requestData();
@@ -23,16 +36,69 @@ class InputsData extends AbstractApp
     }
 
     public function weeksInputs(
-        int $company,
+        int    $company,
         string $prodName,
         string $complect,
         string $techType,
         string $login,
-        string $fio
+        string $fioOv
     ): array
     {
+        $this->company = $company;
+        $this->prodName = $prodName;
+        $this->complect = $complect;
+        $this->techType = $techType;
+        $this->login = $login;
+        $this->fioOv = $fioOv;
 
+        $result = [];
+        $total = null;
+        foreach ($this->weekList as $week => $this->data) {
+            $this->current = ['', '', ''];
+//            $this->current = [$week, $company, $complect];
+            switch ($techType) {
+                case 'ОВМ':
+                    $this->makeLoginOVM();
+                    break;
+                case 'сет':
+                case 'с/м':
+                    $this->makeLoginNet();
+                    break;
+            }
+            if ($this->current[0] == 1 || $this->current[1] == 1) {
+                $total = 1;
+                $this->current[2] = 1;
+            } elseif ($this->current[0] === 0 || $this->current[1] === 0) {
+                $total = $total ?: 0;
+                $this->current[2] = 0;
+            } else {
+                $total ??= $this->current[0] ?: $this->current[1];
+                $this->current[2] = $total;
+            }
+            $result = array_merge($result, $this->current);
+        }
+        $result[] = $total;
+
+        return $result;
     }
+
+    private function makeLoginOVM()  //ОВМ
+    {
+        if (!$this->login) {
+            $this->current[0] = $this->noLogin;
+            return;
+        }
+        preg_match_all('|[\d_/]+|', $this->complect, $m);
+        $login = str_replace(['_0', '/'], ['_', '_'], $m[0][0]) . "#$this->login";
+        $this->current[0] = empty($this->data['login'][$login]) ? 0 : 1;
+    }
+
+    private function makeLoginNet()  //сет,  с/м
+    {
+        $this->current[0] = $this->login ? (empty($this->data['login'][$this->login]) ? 0 : 1) : $this->noLogin;
+        $this->current[1] = $this->fioOv ? (empty($this->data['fio_ov'][$this->fioOv]) ? 0 : 1) : $this->noLogin;
+    }
+
 
     private function requestData(): void
     {
@@ -53,7 +119,7 @@ class InputsData extends AbstractApp
             $t = strtotime("-$i week", $last);
             $this->weekList[(int)date('W', $t)] = []; // int - чтобы не было 01 02 ...
         }
-        $this->log(print_r($this->weekList, 1));
+//        $this->log(print_r($this->weekList, 1));
     }
 
     private function getIntputs(): void
@@ -91,6 +157,7 @@ class InputsData extends AbstractApp
             $this->weekList[$item['num_week']]['data'][] = [
                 'company_id' => $item['company_id'],
                 'product' => [$item['ide_product'], $item['tech_type'], $item['version'],],
+                'cnt' => $item['cnt'],
                 'login' => $item['login'],
                 'fio_ov' => $item['fio_ov'],
             ];
@@ -102,7 +169,7 @@ class InputsData extends AbstractApp
 //        $this->log(print_r($this->weekList, 1));
     }
 
-    private function createKeys(array &$week): void
+    private function createKeys(array &$week): void //
     {
         if (empty($week['data']))
             return;

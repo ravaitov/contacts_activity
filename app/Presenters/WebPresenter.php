@@ -16,16 +16,8 @@ class WebPresenter extends AbstractPresenter
     private function thead(): string
     {
         $res = "<tr>\n<th rowspan='3'>#</th>\n";
-        foreach ($this->data['data'][0] as $field => $el) {
-            if ($field[0] == '#')
-                continue;
-            if ($field == 'products') {
-                foreach ($el[0] as $prod => $x) {
-                    $res .= "<th rowspan='3'>{$this->fieldMapper[$prod]}</th>\n";
-                }
-                continue;
-            }
-            $res .= "<th rowspan='3'>{$this->fieldMapper[$field]}</th>\n";
+        foreach ($this->fieldMapper as $el) {
+            $res .= "<th rowspan='3'>$el</th>\n";
         }
         $cnt = count($this->data['weeks']);
         $cols = $cnt * 3;
@@ -48,27 +40,28 @@ class WebPresenter extends AbstractPresenter
         $i = 0;
         $res = "";
         $cnt = count($this->data['weeks']);
+//        $this->log(print_r($this->data['data'],1));
         foreach ($this->data['data'] as $row) {
             $leftRow = '';
-            foreach ($row as $field => $val) {
-                if ($field[0] == '#')
+            $error = '';
+            foreach ($row as $key => $val) {
+                if ("$key"[0] == '#')
                     continue;
-                if ($field == 'products') {
+                if ($key == 'products') { // расщепление по продуктам
+                    if (!$val[0][0]) {
+                        $error = " style=\"color:red\"";
+                    }
                     foreach ($val as $prods) {
                         $prodStr = '';
                         foreach ($prods as $prodField) {
                             $prodStr .= "<td>$prodField</td>\n";
                         }
+                        $i++;
+                        $res .= "<tr$error>\n<td>$i</td>\n$leftRow$prodStr</tr>";
                     }
-                    $i++;
-                    $x = '';
-                    for ($k = 0; $k < ($cnt * 3 + 1); $k++) {
-                        $x .= "<td> </td>\n";
-                    }
-                    $res .= "<tr>\n<td>$i</td>\n$leftRow$prodStr$x</tr>";
-                    continue;
+                } else {
+                    $leftRow .= "<td>$val</td>\n"; // это ловится до продуктов
                 }
-                $leftRow .= "<td>$val</td>\n";
             }
         }
 

@@ -20,7 +20,7 @@
         <input type="button" value="Скачать xlsx" onclick="alert('Клик!')" id="xlsx">
     </div>
     <div>
-        <input type="button" value="Test" onclick="test()" id="test">
+<!--        <input type="button" value="Test" onclick="test()" id="test">-->
     </div>
 
 </div>

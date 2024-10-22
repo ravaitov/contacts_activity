@@ -23,8 +23,9 @@ function send() {
             $('#xlsx').prop('disabled', false);
             preloaderSwitch('off');
         },
-        error: function () {
-            alert('error1');
+        error: function (error) {
+            // data = JSON.parse(data);
+            alert('error1: ' + error.responseText);
         }
     });
 }
