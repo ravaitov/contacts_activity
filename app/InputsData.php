@@ -20,7 +20,7 @@ class InputsData extends AbstractApp
     private array $data;
 
     private string $noLogin = 'н/и';
-    private string $noLogin2 = 'н/и КЦ';
+    private string $noInfo = 'н/и КЦ';
 
     public function run(): void
     {
@@ -55,15 +55,21 @@ class InputsData extends AbstractApp
         $total = null;
         foreach ($this->weekList as $week => $this->data) {
             $this->current = ['', '', ''];
-//            $this->current = [$week, $company, $complect];
             switch ($techType) {
+                case '':
+                    break;
                 case 'ОВМ':
-                    $this->makeLoginOVM();
+                    $this->processingLoginOVM();
                     break;
                 case 'сет':
                 case 'с/м':
-                    $this->makeLoginNet();
+                    $this->processingLoginNet();
                     break;
+                case 'ОВП':
+                    $this->processingOVP();
+                    break;
+                default:
+                    $this->processingOther();
             }
             if ($this->current[0] == 1 || $this->current[1] == 1) {
                 $total = 1;
@@ -82,7 +88,7 @@ class InputsData extends AbstractApp
         return $result;
     }
 
-    private function makeLoginOVM()  //ОВМ
+    private function processingLoginOVM(): void  //ОВМ
     {
         if (!$this->login) {
             $this->current[0] = $this->noLogin;
@@ -90,15 +96,72 @@ class InputsData extends AbstractApp
         }
         preg_match_all('|[\d_/]+|', $this->complect, $m);
         $login = str_replace(['_0', '/'], ['_', '_'], $m[0][0]) . "#$this->login";
-        $this->current[0] = empty($this->data['login'][$login]) ? 0 : 1;
+        if ($el = $this->data['login'][$login] ?? false) {
+            $this->current[0] = $this->data['data'][$el[0]]['cnt'] ? 1 : 0;
+        } else {
+            $this->current[0] = $this->noInfo;
+        }
     }
 
-    private function makeLoginNet()  //сет,  с/м
+    private function processingLoginNet(): void  //сет,  с/м
     {
-        $this->current[0] = $this->login ? (empty($this->data['login'][$this->login]) ? 0 : 1) : $this->noLogin;
-        $this->current[1] = $this->fioOv ? (empty($this->data['fio_ov'][$this->fioOv]) ? 0 : 1) : $this->noLogin;
+        if (!$this->login) {
+            $this->current[0] = $this->noLogin;
+        } elseif ($el = $this->data['login'][$this->login] ?? false) {
+            $this->current[0] = $this->data['data'][$el[0]]['cnt'] ? 1 : 0;
+        } else {
+            $this->current[0] = $this->noInfo;
+        }
+
+        if (!$this->fioOv) {
+            $this->current[1] = $this->noLogin;
+        } elseif ($el = $this->data['fio_ov'][$this->fioOv] ?? false) {
+            $this->current[1] = $this->data['data'][$el[0]]['cnt'] ? 1 : 0;
+        } else {
+            $this->current[1] = $this->noInfo;
+        }
     }
 
+    private function processingOVP(): void //ОВП
+    {
+        if (!$list = $this->data['company_complect'][$this->company . '_' . $this->complect] ?? []) {
+            $this->current = [$this->noInfo, $this->noInfo, $this->noInfo,];
+            return;
+        }
+        foreach ($list as $i) {
+            $el = $this->data['data'][$i];
+            if ($el['tag']) { // online
+                if ($this->getLogin() ==  $el['login']) {
+                    $this->current[0] = $el['cnt'] ? 1 : 0;
+                }
+            }
+        }
+    }
+
+    private function processingOther(): void //И-В,ОВК,ОВК-Ф,ОВМ,ОВМ2,ОВМ3,ОВМ-Ф
+    {
+        if (!$list = $this->data['company_complect'][$this->company . '_' . $this->complect] ?? []) {
+            $this->current = [$this->noInfo, $this->noInfo, $this->noInfo,];
+            return;
+        }
+        foreach ($list as $i) {
+            $el = $this->data['data'][$i];
+            if ($el['tag']) { // online
+                if ($this->getLogin() == explode('#', $el['login'])[0]) {
+                    $this->current[0] = $el['cnt'] ? 1 : 0;
+                }
+            } else { // offlint
+                $this->current[1] = $el['cnt'] ? 1 : 0;
+            }
+            $this->current = array_map(fn($x) => $x === '' ? $this->noInfo : $x, $this->current);
+        }
+    }
+
+    private function getLogin(): string
+    {
+        preg_match_all('|[\d_/]+|', $this->complect, $m);
+        return str_replace(['_0', '/'], ['_', '_'], $m[0][0]);
+    }
 
     private function requestData(): void
     {
@@ -141,11 +204,14 @@ class InputsData extends AbstractApp
             	NumYear num_year,
             	cnt,
             	login,
-            	fio_ov
+            	fio_ov,
+            	tag,
+            	ComplREG complect
             FROM
             	dbo.uf_ric037_report_distr_log_b24 ($this->weekCnt, '$date')
             WHERE
-            	idCompany IS NOT NULL;			
+            	idCompany IS NOT NULL
+                AND ComplREG IS NOT NULL;			
             SQL;
         $this->result = $this->baseMs->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         file_put_contents($cacheFile, serialize($this->result));
@@ -160,6 +226,8 @@ class InputsData extends AbstractApp
                 'cnt' => $item['cnt'],
                 'login' => $item['login'],
                 'fio_ov' => $item['fio_ov'],
+                'tag' => $item['tag'],
+                'complect' => $item['complect'],
             ];
         }
 //        $this->log(print_r($this->weekList, 1));
@@ -169,13 +237,13 @@ class InputsData extends AbstractApp
 //        $this->log(print_r($this->weekList, 1));
     }
 
-    private function createKeys(array &$week): void //
+    private function createKeys(array &$week): void // доп. массивы с ключами fio_ov, login и company_product  для быстрого поиска
     {
         if (empty($week['data']))
             return;
         for ($i = count($week['data']) - 1; $i >= 0; $i--) {
             $el = $week['data'][$i];
-            $week['company_product'][$el['company_id'] . '_' . $el['product'][0]][] = $i;
+            $week['company_complect'][$el['company_id'] . '_' . $el['complect']][] = $i;
             if (!empty($el['fio_ov'])) {
                 $week['fio_ov'][$el['fio_ov']][] = $i;
             }

@@ -23,11 +23,13 @@ class AbstractPresenter
     ];
     protected array $data;
     protected Logger $logger;
+    protected int $colNums;
 
     public function __construct(array $data)
     {
         $this->logger = Logger::instance();
         $this->data = $data;
+        $this->colNums = count($this->fieldMapper);
     }
 
     public function log(string $log, int $level = 0): void

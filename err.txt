@@ -1,0 +1,7 @@
+PHP Fatal error:  Uncaught TypeError: App\Presenters\WebPresenter::body(): Return value must be of type string, none returned in /home/worker/https/reports/contacts_activity/app/Presenters/WebPresenter.php:61
+Stack trace:
+#0 /home/worker/https/reports/contacts_activity/app/Presenters/WebPresenter.php(11): App\Presenters\WebPresenter->body()
+#1 /home/worker/https/reports/contacts_activity/app/TestApp.php(23): App\Presenters\WebPresenter->sendTable()
+#2 /home/worker/https/reports/contacts_activity/run.php(31): App\TestApp->run()
+#3 {main}
+  thrown in /home/worker/https/reports/contacts_activity/app/Presenters/WebPresenter.php on line 61

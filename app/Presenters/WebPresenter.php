@@ -21,13 +21,13 @@ class WebPresenter extends AbstractPresenter
         }
         $cnt = count($this->data['weeks']);
         $cols = $cnt * 3;
-        $res .= "<th colspan='$cols'>недели</th>\n<th  rowspan='3'>Итог</tr\n><tr>\n";
+        $res .= "<th colspan='$cols'>недели</th>\n<th  rowspan='3'>&nbsp;&nbsp;Итог&nbsp;&nbsp;</tr\n><tr>\n";
         foreach ($this->data['weeks'] as $week) {
             $res .= "<th colspan='3'>$week</th>";
         }
         $res .= "</tr>\n<tr>\n";
         for ($i = 0; $i < $cnt; $i++) {
-            $res .= "<th>Онлайн</th><th>Офлайн</th><th>Итог</th>";
+            $res .= "<th>Онлайн</th><th>Офлайн</th><th>&nbsp;&nbsp;Итог&nbsp;&nbsp;</th>";
         }
         $res .= "</tr>\n";
 //        $this->log(print_r($res, 1));
@@ -42,6 +42,7 @@ class WebPresenter extends AbstractPresenter
         $cnt = count($this->data['weeks']);
 //        $this->log(print_r($this->data['data'],1));
         foreach ($this->data['data'] as $row) {
+            $col = 0;
             $leftRow = '';
             $error = '';
             foreach ($row as $key => $val) {
@@ -54,6 +55,8 @@ class WebPresenter extends AbstractPresenter
                     foreach ($val as $prods) {
                         $prodStr = '';
                         foreach ($prods as $prodField) {
+//                            if (in_array(++$col, [11, 10]))
+//                                continue;
                             $prodStr .= "<td>$prodField</td>\n";
                         }
                         $i++;
@@ -61,6 +64,7 @@ class WebPresenter extends AbstractPresenter
                     }
                 } else {
                     $leftRow .= "<td>$val</td>\n"; // это ловится до продуктов
+                    $col++;
                 }
             }
         }

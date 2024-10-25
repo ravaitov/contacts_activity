@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+
 //if ($_REQUEST['DOMAIN'] == "bitrix.zemser.ru") {
     require_once 'header.html';
     require_once 'body.php';

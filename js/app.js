@@ -30,22 +30,13 @@ function send() {
     });
 }
 
-function test() {
-    $("#table1 thead").empty();
-        str =
-        '<tr>' +
-        '<th>#</th>' +
-        '<th>Компания</th>' +
-        '<th>Активность</th>' +
-        '<th>Контакт</th>' +
-        '<th>Ключевой?</th>' +
-        '<th>36</th>' +
-        '<th>37</th>' +
-        '<th>38</th>' +
-        '<th>39</th>' +
-        '<th>40</th>' +
-        '<th>50</th>' +
-        '<th>511111</th>' +
-        '</tr>';
-    $("#table1 thead").append(str);
+
+function getUser() {
+    $.get("https://bitrix.zemser.ru/local/b24_scripts/user.php",
+        onAjaxSuccess
+    );
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
 }

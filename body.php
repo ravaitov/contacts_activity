@@ -17,7 +17,7 @@
         <input type="button" value="Ok" id="apply" onclick="send()">
     </div>
     <div class="col-sm-3">
-        <input type="button" value="Скачать xlsx" onclick="alert('Клик!')" id="xlsx">
+        <input type="button" value="Скачать xlsx" onclick="tableXls()" id="xlsx">
     </div>
     <div>
 <!--        <input type="button" value="Test" onclick="test()" id="test">-->

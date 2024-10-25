@@ -32,6 +32,7 @@ class PivotTable extends AbstractApp
         $this->companyList->run();
 
         foreach ($this->contactDisList90->result as $company => $contacts) {
+//            if ($company != 1741) continue; // debug
             foreach ($contacts as $contact => $el) {
                 if (empty($this->contactLevelsCrm->result[$contact]))
                     continue;

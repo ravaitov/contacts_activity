@@ -78,3 +78,12 @@ function jump(id) {
     win = window.open('https://app.zemser.ru/annual_report/report.php?id=' + id + '&start=' + start + '&end=' + end, "_blank");
     win.addEventListener('load', preloaderSwitch('off'), false);
 }
+
+function tableXls() {
+    $("#table1").table2excel({
+        exclude: ".excludeThisClass",
+        name: "Worksheet1",
+        filename: "file.xls", // do include extension
+        preserveColors: false // set to true if you want background colors and font colors preserved
+    });
+}
