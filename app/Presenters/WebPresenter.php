@@ -41,6 +41,8 @@ class WebPresenter extends AbstractPresenter
         $res = "";
         $cnt = count($this->data['weeks']);
 //        $this->log(print_r($this->data['data'],1));
+        if (!$this->data['data'])
+            return '0';
         foreach ($this->data['data'] as $row) {
             $col = 0;
             $leftRow = '';

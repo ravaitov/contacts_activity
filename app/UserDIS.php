@@ -2,7 +2,7 @@
 
 namespace App;
 
-class ListDIS extends AbstractApp
+class UserDIS extends AbstractApp
 {
     public function run(): void
     {

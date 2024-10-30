@@ -32,31 +32,41 @@ class PivotTable extends AbstractApp
         $this->companyList->run();
 
         foreach ($this->contactDisList90->result as $company => $contacts) {
-//            if ($company != 1741) continue; // debug
             foreach ($contacts as $contact => $el) {
                 if (empty($this->contactLevelsCrm->result[$contact]))
                     continue;
                 $manager = $this->contactDisList90->result[$company][$contact];
-                $data["$company|$contact"] = [
-                    'company' => $this->companyList->result[$company] ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>",
-                    'contact' => $this->contactLevelsCrm->result[$contact]['name'],
-                    'manager' => $this->userList->result[$manager],
-                    'usage_level' => $this->contactLevelsCrm->result[$contact]['usage_level'],
-                    'influence_level' => $this->contactLevelsCrm->result[$contact]['influence_level'],
-                    'products' => $this->productResult($company, $contact),
+                if ($this->blocked('sds', $manager) || $this->blocked('contact', $contact))
+                    continue;
+                if ($product = $this->productResult($company, $contact)) {
+                    $data["$company|$contact"] = [
+                        'company' => "<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company]
+                            ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>" . "</a>",
+                        'contact' => "<a onClick=\"jump2Contakt('$contact');\" >"
+                            . $this->contactLevelsCrm->result[$contact]['name'] . "</a>",
+                        'manager' => $this->userList->result[$manager],
+                        'usage_level' => $this->contactLevelsCrm->result[$contact]['usage_level'],
+                        'influence_level' => $this->contactLevelsCrm->result[$contact]['influence_level'],
+                        'products' => $product,
 //                    '#id' => [$company, $contact, $manager],
-                ];
+                    ];
+                }
             }
         }
+        if (!$data) {
+            $this->result = ['data' => [], 'weeks' => []];
+            return;
+        }
         usort($data, fn($a, $b) => $a['manager'] <=> $b['manager']);
-        $this->result = ['data' =>  $data, 'weeks' => $this->inputsData->weekList()];
+        $this->result = ['data' => $data, 'weeks' => $this->inputsData->weekNums()];
 //        $this->log(print_r($this->result,1));
     }
 
     private function productResult(int $company, int $contact): array
     {
+        $del = [];
         $result = $this->contactComplect234->result[$company][$contact] ?? [$this->contactComplect234->fillProduct()];
-        foreach ($result as &$prod) {
+        foreach ($result as $id => &$prod) {
             $weekData = $this->inputsData->weeksInputs(
                 $company,
                 $prod['ide_product'] ?? '',
@@ -65,7 +75,14 @@ class PivotTable extends AbstractApp
                 $prod['login'] ?? '',
                 $prod['fio4ois'] ?? '',
             );
-            $prod = array_values(array_merge($prod, $weekData));
+            if ($weekData && !$this->blocked('ois', $prod['fio4ois'])) {
+                $prod = array_values(array_merge($prod, $weekData));
+            } else {
+                $del[] = $id;
+            }
+            foreach ($del as $id) {
+                unset($result[$id]);
+            }
         }
 
         return $result;

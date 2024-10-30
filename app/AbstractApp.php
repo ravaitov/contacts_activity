@@ -9,6 +9,8 @@ use PDO;
 
 class AbstractApp
 {
+    protected static array $params = [];
+
     protected Config $config;
     protected DataBase $baseReport;
     protected DataBase $baseB24;
@@ -25,7 +27,7 @@ class AbstractApp
         $this->config = Config::instance();
         $a = explode('\\', get_class($this));
         $this->appName = end($a);
-        $this->config->setParam('app_name', $this->appName);
+//        $this->config->setParam('app_name', $this->appName);
         $this->logger = Logger::instance();
         $this->log(">>> Старт: " . $this->appName . '. V=' . $this->config->conf('version'));
 //        $this->baseReport = new DataBase('db_report');
@@ -81,6 +83,17 @@ class AbstractApp
             $result .= "`$field`='$value',";
         }
         return substr($result, 0, -1);
+    }
+
+    protected function blocked(string $key, string|int $val = 'default'): bool
+    {
+        if (!isset(static::$params[$key]) || static::$params[$key] === 'default')
+            return false;
+        if ($key == 'ois')
+            return $val ? false : true;
+        if (static::$params[$key] != $val || ($key == 'ois' && $val == ''))
+            return true;
+        return false;
     }
 
     protected function finish(): void

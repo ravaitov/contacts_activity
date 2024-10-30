@@ -79,6 +79,14 @@ function jump(id) {
     win.addEventListener('load', preloaderSwitch('off'), false);
 }
 
+function jump2Company(id) {
+    window.open('https://bitrix.zemser.ru/crm/company/details/' + id + '/', "_blank");
+}
+
+function jump2Contakt(id) {
+    window.open('https://bitrix.zemser.ru/crm/contact/details/' + id + '/', "_blank");
+}
+
 function tableXls() {
     $("#table1").table2excel({
         exclude: ".excludeThisClass",

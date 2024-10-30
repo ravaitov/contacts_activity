@@ -24,13 +24,13 @@ class InputsData extends AbstractApp
 
     public function run(): void
     {
-        $this->requestData();
+//        $this->requestData();
         $this->initWeekList();
         $this->getIntputs();
         $this->fillWeekList();
     }
 
-    public function weekList(): array
+    public function weekNums(): array
     {
         return array_keys($this->weekList);
     }
@@ -84,6 +84,9 @@ class InputsData extends AbstractApp
             $result = array_merge($result, $this->current);
         }
         $result[] = $total;
+
+        if ($this->blocked('total', $total))
+            return [];
 
         return $result;
     }
@@ -163,20 +166,11 @@ class InputsData extends AbstractApp
         return str_replace(['_0', '/'], ['_', '_'], $m[0][0]);
     }
 
-    private function requestData(): void
-    {
-        $weekCnt = $_REQUEST['week'] ?? 0;
-        $date = $_REQUEST['date'] ?? 0;
-        $this->log("Количество недель: $weekCnt, дата: $date");
-        if (!$weekCnt || !$date || $weekCnt > 10 || !preg_match('/\d\d\d\d-\d\d-\d\d/', $date)) {
-            throw new \Exception("Не корректные данные!\n" . print_r($_REQUEST, 1));
-        }
-        $this->date = $date;
-        $this->weekCnt = (int)$weekCnt;
-    }
-
     private function initWeekList(): void
     {
+//        $this->log('static__ ' . print_r(static::$params, 1));
+        $this->date = static::$params['date'];
+        $this->weekCnt = static::$params['week'];
         $last = (int)strtotime($this->date);
         for ($i = $this->weekCnt - 1; $i >= 0; $i--) {
             $t = strtotime("-$i week", $last);

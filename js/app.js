@@ -11,7 +11,11 @@ function send() {
         dataType: 'text',
         data: {
             "week": document.querySelector('#weekpicker').value,
-            "date": $("#datetimepicker1").data('date')
+            "date": $("#datetimepicker1").data('date'),
+            "sds": $("#sds")[0].value,
+            "contact": $("#contact")[0].value,
+            "ois": $("#ois")[0].value,
+            "total": $("#total")[0].value
         }, success: function (data) {
             $("#table1 tbody").empty();
             $("#table1 thead").empty();
