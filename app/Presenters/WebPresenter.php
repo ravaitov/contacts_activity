@@ -40,7 +40,6 @@ class WebPresenter extends AbstractPresenter
         $i = 0;
         $res = "";
         $cnt = count($this->data['weeks']);
-//        $this->log(print_r($this->data['data'],1));
         if (!$this->data['data'])
             return '0';
         foreach ($this->data['data'] as $row) {
@@ -57,15 +56,15 @@ class WebPresenter extends AbstractPresenter
                     foreach ($val as $prods) {
                         $prodStr = '';
                         foreach ($prods as $prodField) {
-//                            if (in_array(++$col, [11, 10]))
-//                                continue;
+                            if (in_array(++$col, [11, 10])) // скрыть логины
+                                continue;
                             $prodStr .= "<td>$prodField</td>\n";
                         }
                         $i++;
                         $res .= "<tr$error>\n<td>$i</td>\n$leftRow$prodStr</tr>";
                     }
                 } else {
-                    $leftRow .= "<td>$val</td>\n"; // это ловится до продуктов
+                    $leftRow .= "<td>$val</td>\n"; // это ловится до products
                     $col++;
                 }
             }

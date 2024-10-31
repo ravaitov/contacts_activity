@@ -89,11 +89,11 @@ class AbstractApp
     {
         if (!isset(static::$params[$key]) || static::$params[$key] === 'default')
             return false;
+
         if ($key == 'ois')
             return $val ? false : true;
-        if (static::$params[$key] != $val || ($key == 'ois' && $val == ''))
-            return true;
-        return false;
+
+        return static::$params[$key] != $val ? true : false;
     }
 
     protected function finish(): void

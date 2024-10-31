@@ -40,8 +40,8 @@ class PivotTable extends AbstractApp
                     continue;
                 if ($product = $this->productResult($company, $contact)) {
                     $data["$company|$contact"] = [
-                        'company' => "<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company]
-                            ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>" . "</a>",
+                        'company' => ("<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company]
+                            ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>") . "</a>",
                         'contact' => "<a onClick=\"jump2Contakt('$contact');\" >"
                             . $this->contactLevelsCrm->result[$contact]['name'] . "</a>",
                         'manager' => $this->userList->result[$manager],
