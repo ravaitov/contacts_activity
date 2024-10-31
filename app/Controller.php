@@ -13,6 +13,6 @@ class Controller extends AbstractApp
             throw new \Exception("Не корректные данные!\n" . print_r($_REQUEST, 1));
         }
         static::$params = $_REQUEST;
-//        $this->log('static' . print_r(static::$params, 1));
+//        $this->log('static = ' . print_r(static::$params, 1));
     }
 }

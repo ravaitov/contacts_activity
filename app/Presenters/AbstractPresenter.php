@@ -18,8 +18,8 @@ class AbstractPresenter
         'version' => 'Версия',
 //        'net_type' => 'Сетевитость',
         'tech_type' => 'Тех. тип',
-        'login' => 'Логин (онлайн)',
-        'fio4ois' => 'ФИО (для ОИС)',
+//        'login' => 'Логин (онлайн)',  // скрыть логин
+//        'fio4ois' => 'ФИО (для ОИС)', // скрыть логин
     ];
     protected array $data;
     protected Logger $logger;
