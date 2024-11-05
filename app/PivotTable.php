@@ -10,6 +10,7 @@ class PivotTable extends AbstractApp
     private InputsData $inputsData;
     private CompanyName $companyList;
     private UserName $userList;
+    private ServingCompany $servingCompany;
 
     public function __construct()
     {
@@ -20,6 +21,7 @@ class PivotTable extends AbstractApp
         $this->inputsData = new InputsData();
         $this->companyList = new CompanyName();
         $this->userList = new UserName();
+        $this->servingCompany = new ServingCompany();
     }
 
     public function run(): void
@@ -30,26 +32,40 @@ class PivotTable extends AbstractApp
         $this->inputsData->run();
         $this->userList->run();
         $this->companyList->run();
+        $this->servingCompany->run();
 
-        foreach ($this->contactDisList90->result as $company => $contacts) {
+        $cnt = 1;
+        foreach ($this->contactLevelsCrm->result as $company => $contacts) {
             foreach ($contacts as $contact => $el) {
-                if (empty($this->contactLevelsCrm->result[$contact]))
-                    continue;
-                $manager = $this->contactDisList90->result[$company][$contact];
-                if ($this->blocked('sds', $manager) || $this->blocked('contact', $contact))
+                $manager = $this->contactDisList90->result[$company][$contact] ?? '-';
+                $group = $this->servingCompany->result[$company]['group'] ?? '-';
+                if (
+                    $this->blocked('sds', $manager)
+                    || $this->blocked('contact', $contact)
+                    || $this->blocked('dis', $manager == '-' ? 'нет' : 'да')
+                    || $this->blocked('group', $group)
+                )
                     continue;
                 if ($product = $this->productResult($company, $contact)) {
                     $data["$company|$contact"] = [
-                        'company' => ("<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company]
-                            ?? "<span style=\"color:red\">ОШИБКА! ID=$company</span>") . "</a>",
-                        'contact' => "<a onClick=\"jump2Contakt('$contact');\" >"
-                            . $this->contactLevelsCrm->result[$contact]['name'] . "</a>",
-                        'manager' => $this->userList->result[$manager],
-                        'usage_level' => $this->contactLevelsCrm->result[$contact]['usage_level'],
-                        'influence_level' => $this->contactLevelsCrm->result[$contact]['influence_level'],
+                        'company' => [
+                            'web' => "<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company] . "</a>",
+                            'name' => $this->companyList->result[$company],
+                            ],
+                        'group' => $group,
+                        'responsible' => $this->servingCompany->result[$company]['responsible'],
+                        'contact' => [
+                            'web' => "<a onClick=\"jump2Contakt('$contact');\" >" . $el['name'] . "</a>",
+                            'name' => $el['name'],
+                            ],
+                        'manager' => $this->userList->result[$manager] ?? '-',
+                        'usage_level' => $el['usage_level'],
+                        'influence_level' => $el['influence_level'],
                         'products' => $product,
 //                    '#id' => [$company, $contact, $manager],
                     ];
+//                    if ($cnt++ > 2)
+//                        break 2;
                 }
             }
         }
@@ -57,9 +73,13 @@ class PivotTable extends AbstractApp
             $this->result = ['data' => [], 'weeks' => []];
             return;
         }
-        usort($data, fn($a, $b) => $a['manager'] <=> $b['manager']);
+        $tr = function (string $x): string {
+            return $x == '-' ? 'ЯЯЯ' : $x;
+        };
+        usort($data, fn($a, $b) => $tr($a['manager']) <=> $tr($b['manager']));
+
         $this->result = ['data' => $data, 'weeks' => $this->inputsData->weekNums()];
-//        $this->log(print_r($this->result,1));
+//        $this->log(print_r($this->result, 1));
     }
 
     private function productResult(int $company, int $contact): array
@@ -76,7 +96,7 @@ class PivotTable extends AbstractApp
                 $prod['fio4ois'] ?? '',
             );
             if ($weekData && !$this->blocked('ois', $prod['fio4ois'])) {
-                $prod = array_values(array_merge($prod, $weekData));
+                $prod = array_merge($prod, $weekData);
             } else {
                 $del[] = $id;
             }

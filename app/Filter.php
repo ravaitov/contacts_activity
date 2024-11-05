@@ -22,20 +22,21 @@ class Filter
         }
     }
 
-    public function run(bool $echo = false): void
+    public function run(string $none = ''): void
     {
         $this->out = <<<EOD
-            <div class="col-xs-3">
-            <label for="$this->id">$this->name:&nbsp;</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="$this->id">$this->name:&nbsp;</label>
             <select id="$this->id">
                 <option value="default" selected>все
-                </option>\n
+                </option>
         EOD;
         foreach ($this->list as $value => $item) {
-            $this->out .= "<option value=\"$value\">$item</option>\n";
+            $this->out .= "<option value=\"$value\">$item</option>";
         }
-        $this->out .= "</select>\n</div>\n";
-        if ($echo)
-            echo $this->out;
+        if ($none !== '') {
+            $this->out .= "<option value=\"$none\">$none</option>";
+        }
+        $this->out .= "</select>";
+        echo $this->out;
     }
 }

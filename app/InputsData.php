@@ -20,7 +20,7 @@ class InputsData extends AbstractApp
     private array $data;
 
     private string $noLogin = 'н/и';
-    private string $noInfo = 'н/и КЦ';
+    private string $noInfo = 'н/д КЦ';
 
     public function run(): void
     {

@@ -6,11 +6,13 @@ class WebPresenter extends AbstractPresenter
 {
     public function sendTable(): string
     {
-        return json_encode([
+        $json = json_encode([
             'thead' => $this->thead(),
             'body' => $this->body(),
         ],
             JSON_UNESCAPED_UNICODE);
+//        $this->log(print_r(json_decode($json, 1), 1));
+        return $json;
     }
 
     private function thead(): string
@@ -21,7 +23,7 @@ class WebPresenter extends AbstractPresenter
         }
         $cnt = count($this->data['weeks']);
         $cols = $cnt * 3;
-        $res .= "<th colspan='$cols'>недели</th>\n<th  rowspan='3'>&nbsp;&nbsp;Итог&nbsp;&nbsp;</tr\n><tr>\n";
+        $res .= "<th colspan='$cols'>недели</th>\n<th  rowspan='3'>&nbsp;&nbsp;Итог&nbsp;&nbsp;</tr>\n<tr>\n";
         foreach ($this->data['weeks'] as $week) {
             $res .= "<th colspan='3'>$week</th>";
         }
@@ -43,29 +45,31 @@ class WebPresenter extends AbstractPresenter
         if (!$this->data['data'])
             return '0';
         foreach ($this->data['data'] as $row) {
-            $col = 0;
             $leftRow = '';
             $error = '';
             foreach ($row as $key => $val) {
                 if ("$key"[0] == '#')
                     continue;
                 if ($key == 'products') { // расщепление по продуктам
-                    if (!$val[0][0]) {
+                    if ($val[0]['ide_product'] == '-') {
                         $error = " style=\"color:red\"";
                     }
                     foreach ($val as $prods) {
                         $prodStr = '';
-                        foreach ($prods as $prodField) {
-                            if (in_array(++$col, [11, 10])) // скрыть логины
+                        foreach ($prods as $key => $prodField) {
+//                            if (empty($this->fieldMapper[$key])) // скрыть логины
+                            if (in_array($key, ['login', 'fio4ois'])) // скрыть логины
                                 continue;
                             $prodStr .= "<td>$prodField</td>\n";
                         }
                         $i++;
                         $res .= "<tr$error>\n<td>$i</td>\n$leftRow$prodStr</tr>";
                     }
-                } else {
-                    $leftRow .= "<td>$val</td>\n"; // это ловится до products
-                    $col++;
+                } else { // это ловится до products
+                    if (is_array($val)) {
+                        $val = $val['web'];
+                    }
+                    $leftRow .= "<td>$val</td>\n";
                 }
             }
         }

@@ -93,7 +93,7 @@ class AbstractApp
         if ($key == 'ois')
             return $val ? false : true;
 
-        return static::$params[$key] != $val ? true : false;
+        return static::$params[$key] == $val ? false : true;
     }
 
     protected function finish(): void

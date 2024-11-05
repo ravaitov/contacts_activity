@@ -15,7 +15,9 @@ function send() {
             "sds": $("#sds")[0].value,
             "contact": $("#contact")[0].value,
             "ois": $("#ois")[0].value,
-            "total": $("#total")[0].value
+            "total": $("#total")[0].value,
+            "dis": $("#dis")[0].value,
+            "group": $("#group")[0].value,
         }, success: function (data) {
             $("#table1 tbody").empty();
             $("#table1 thead").empty();

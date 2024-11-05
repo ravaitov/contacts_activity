@@ -8,6 +8,8 @@ class AbstractPresenter
 {
     protected array $fieldMapper = [ // порядок важен!
         'company' => 'Компания',
+        'group' => 'Группа',
+        'responsible' => 'Ответственный',
         'contact' => 'Контакт',
         'manager' => 'Менеджер',
         'usage_level' => 'Уровень использования К+',

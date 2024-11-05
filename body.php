@@ -8,7 +8,7 @@
         <label for="weekpicker">&nbsp;&nbsp;&nbsp;Количество недель &nbsp;</label>
         <input type="number" max="10" min="1" id="weekpicker" value="4">
         <label for="datetimepicker1">&nbsp; до &nbsp;</label>
-        <div class="input-group date-time-picker-pf col-sm-5" id="datetimepicker1">
+        <div class="input-group date-time-picker-pf col-sm-4" id="datetimepicker1">
             <input type="text" class="form-control">
             <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
@@ -16,18 +16,23 @@
         </div>
         <input type="button" value="Ok" id="apply" onclick="send()">
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <input type="button" value="Скачать xlsx" onclick="tableXls()" id="xlsx">
+<!--        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--        <input type="button" value="Сбросить кэш" onclick="tableXls()" id="xlsx">-->
     </div>
-    <div class="col-xs-6">
+<!--    <div class="col-sm-10">-->
+<!--        <input type="button" value="Сбросить кэш" onclick="tableXls()" id="xlsx">-->
+<!--    </div>-->
         &nbsp;
-    </div>
     <div>
         <?php
-        (new \App\Filter('sds', 'СДС', new \App\UserDIS()))->run(true);
-        (new \App\Filter('contact', 'Контакты', new \App\TransferredContact()))->run(true);
-        (new \App\Filter('ois', 'ОИС', ['оис']))->run(true);
-        (new \App\Filter('total', 'Итог', ['0', '1', 'н/и' => 'н/и', 'н/и КЦ' => 'н/и КЦ']))->run(true);
+        (new \App\Filter('sds', 'СДС', new \App\UserDIS()))->run('-');
+        (new \App\Filter('contact', 'Контакты', new \App\TransferredContact()))->run();
+        (new \App\Filter('ois', 'ОИС', ['оис']))->run();
+        (new \App\Filter('total', 'Итог', ['0', '1', 'н/и' => 'н/и', 'н/д КЦ' => 'н/д КЦ']))->run();
+        (new \App\Filter('dis', 'Передан на ДиС', ['да' => 'да', 'нет' => 'нет']))->run();
+        (new \App\Filter('group', 'Группы', new \App\GroupList()))->run();
         ?>
     </div>
 </div>

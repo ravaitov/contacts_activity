@@ -17,35 +17,39 @@ class ContactLevelsCrm extends AbstractApp
         $this->getUsers();
         $this->formContacts();
 //        print_r($this->result);
-//        foreach (($this->result) as $id => $el) {
-//            if (empty($el['usage_level']) || empty($el['influence_level'])) {
-//                $this->log(print_r($el, 1));
-//            }
-//        }
-//        $this->log(print_r($this->result, 1));
-//        print_r($this->influenceLevelNames);
-//        print_r($this->usageLevelNames);
     }
 
     private function getLevelsId(): void
     {
         $sql = <<<SQL
-            SELECT
-            	con.ID contact_id,
-            	ASSIGNED_BY_ID responsible_id,
-            	CONCAT(IFNULL(LAST_NAME, ''), ' ',  NAME, ' ', IFNULL(SECOND_NAME, '')) name,
-            	ucon.UF_CRM_1524141984 influence_level_id, -- Уровень влияния
-            	ucon.UF_CRM_1551781165 usage_level_id -- Уровень использования К+ 
-            FROM
-            	b_crm_contact con
-            	JOIN b_uts_crm_contact ucon ON con.ID = ucon.VALUE_ID
-            WHERE ucon.UF_CRM_1551781165 < 1969 -- Не пользователь			
+            SELECT con.ID contact_id,
+                 con.ASSIGNED_BY_ID responsible_id,
+                 CONCAT(IFNULL(LAST_NAME, ''), ' ', NAME, ' ', IFNULL(SECOND_NAME, '')) name,
+                 ucon.UF_CRM_1524141984 influence_level_id, -- Уровень влияния
+                 ucon.UF_CRM_1551781165 usage_level_id, -- Уровень использования К+
+                 cco.company_id
+            FROM b_crm_contact con
+                 INNER JOIN b_uts_crm_contact ucon
+                ON con.ID = ucon.VALUE_ID
+                 INNER JOIN b_crm_contact_company cco
+                ON con.ID = cco.CONTACT_ID
+            
+                 INNER JOIN b_crm_company ccom
+                ON ccom.ID = cco.COMPANY_ID
+                 INNER JOIN b_uts_crm_company ucco
+                ON ccom.ID = ucco.VALUE_ID
+            
+                 INNER JOIN b_user_field_enum ufe
+                ON ucco.UF_CRM_1524464429 = ufe.ID
+            AND ufe.USER_FIELD_ID = 182
+            AND ufe.ID = 68
+            WHERE ucon.UF_CRM_1551781165 < 1969
         SQL;
         $res = $this->baseB24->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($res as $el) {
             if (empty($el['usage_level_id']))
                 continue;
-            $this->result[$el['contact_id']] = [
+            $this->result[$el['company_id']][$el['contact_id']] = [
                 'responsible_id' => $el['responsible_id'],
                 'influence_level_id' => $el['influence_level_id'],
                 'usage_level_id' => $el['usage_level_id'],
@@ -123,10 +127,11 @@ class ContactLevelsCrm extends AbstractApp
 
     private function formContacts(): void
     {
-        foreach ($this->result as &$el) {
-            $el['usage_level'] = $this->usageLevelNames[$el['usage_level_id']];
-            $el['influence_level'] = $this->influenceLevelNames[$el['influence_level_id']] ?? '';
-            $el['responsible'] = $this->users[$el['responsible_id']] ?? '';
+        foreach ($this->result as $company => $contacts)
+             foreach ($contacts as $cid => $contact)   {
+                 $this->result[$company][$cid]['usage_level'] = $this->usageLevelNames[$contact['usage_level_id']];
+                 $this->result[$company][$cid]['influence_level'] = $this->influenceLevelNames[$contact['influence_level_id']] ?? '';
+                 $this->result[$company][$cid]['responsible'] = $this->users[$contact['responsible_id']] ?? '';
         }
     }
 }

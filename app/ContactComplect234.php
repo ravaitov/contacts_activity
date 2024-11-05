@@ -38,7 +38,7 @@ class ContactComplect234 extends AbstractApp
     public function fillProduct(array $product = []): array
     {
         return [
-            'ide_product' => $product['ide_product'] ?? '',
+            'ide_product' => $product['ide_product'] ?? '-',
             'complect' => $product ? $product['complect'] : 'Нет привязки',
             'version' => $product['version'] ?? '',
 //                'net_type' => $product['net_type'] ?? '',
