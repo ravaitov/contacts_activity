@@ -36,13 +36,47 @@ function send() {
     });
 }
 
+function tableXls() {
+    preloaderSwitch('on');
 
-function getUser() {
-    $.get("https://bitrix.zemser.ru/local/b24_scripts/user.php",
-        onAjaxSuccess
-    );
+    let week = document.querySelector('#weekpicker').value;
+    let date = $("#datetimepicker1").data('date');
 
-    function onAjaxSuccess(data) {
-        alert(data);
-    }
+    let formData = new FormData();
+    formData.append('week', week);
+    formData.append('date', date);
+    formData.append('sds', $("#sds")[0].value);
+    formData.append('contact', $("#contact")[0].value);
+    formData.append('ois', $("#ois")[0].value);
+    formData.append('total', $("#total")[0].value);
+    formData.append('dis', $("#dis")[0].value);
+    formData.append('group', $("#group")[0].value);
+    formData.append('xlsx', 1);
+
+    let url = 'https://app.zemser.ru/reports/contacts_activity/table.php';
+    let request = new XMLHttpRequest();
+    request.open('POST', url, true);
+    request.responseType = 'blob';
+
+    request.onload = function(e) {
+        preloaderSwitch('off');
+        if (this.status === 200) {
+            let blob = this.response;
+            let fileName = 'report_' + week + '_' + date + '.xlsx';
+            if(window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, fileName);
+            }
+            else{
+                var downloadLink = window.document.createElement('a');
+                var contentTypeHeader = request.getResponseHeader("Content-Type");
+                downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+                downloadLink.download = fileName;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }
+        }
+    };
+    request.send(formData);
 }
+

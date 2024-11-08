@@ -9,7 +9,7 @@ use PDO;
 
 class AbstractApp
 {
-    protected static array $params = [];
+    public static array $params = [];
 
     protected Config $config;
     protected DataBase $baseReport;

@@ -4,7 +4,7 @@ namespace App\Presenters;
 
 class WebPresenter extends AbstractPresenter
 {
-    public function sendTable(): string
+    public function sendTable(): void
     {
         $json = json_encode([
             'thead' => $this->thead(),
@@ -12,7 +12,7 @@ class WebPresenter extends AbstractPresenter
         ],
             JSON_UNESCAPED_UNICODE);
 //        $this->log(print_r(json_decode($json, 1), 1));
-        return $json;
+        echo $json;
     }
 
     private function thead(): string

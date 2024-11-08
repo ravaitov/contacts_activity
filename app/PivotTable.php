@@ -53,7 +53,7 @@ class PivotTable extends AbstractApp
                             'name' => $this->companyList->result[$company],
                             ],
                         'group' => $group,
-                        'responsible' => $this->servingCompany->result[$company]['responsible'],
+                        'responsible' => $this->servingCompany->result[$company]['responsible'] ?? '',
                         'contact' => [
                             'web' => "<a onClick=\"jump2Contakt('$contact');\" >" . $el['name'] . "</a>",
                             'name' => $el['name'],

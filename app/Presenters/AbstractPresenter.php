@@ -2,6 +2,7 @@
 
 namespace App\Presenters;
 
+use App\Config;
 use App\Logger\Logger;
 
 class AbstractPresenter
@@ -26,12 +27,19 @@ class AbstractPresenter
     protected array $data;
     protected Logger $logger;
     protected int $colNums;
+    protected Config $config;
+
 
     public function __construct(array $data)
     {
+        $this->config = Config::instance();
         $this->logger = Logger::instance();
         $this->data = $data;
         $this->colNums = count($this->fieldMapper);
+    }
+
+    public function sendTable(): void
+    {
     }
 
     public function log(string $log, int $level = 0): void
