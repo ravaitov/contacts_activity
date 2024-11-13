@@ -3,6 +3,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Logger\Logger;
 use App\PivotTable;
+use App\Presenters\XlsxPresenter;
 use App\Presenters\WebPresenter;
 
 try {
@@ -10,8 +11,9 @@ try {
     (new \App\Controller())->run();
     $pt = new PivotTable();
     $pt->run();
-    $wr = new WebPresenter($pt->result);
-    echo $wr->sendTable();
+
+    $presenter = empty($pt::$params['xlsx']) ? new WebPresenter($pt->result) :  new XlsxPresenter($pt->result);
+    $presenter->sendTable();
 } catch (Throwable $t) {
     terminateError($t);
 }

@@ -87,11 +87,11 @@ function jump2Contakt(id) {
     window.open('https://bitrix.zemser.ru/crm/contact/details/' + id + '/', "_blank");
 }
 
-function tableXls() {
-    $("#table1").table2excel({
-        exclude: ".excludeThisClass",
-        name: "Worksheet1",
-        filename: "file.xls", // do include extension
-        preserveColors: false // set to true if you want background colors and font colors preserved
-    });
-}
+// function tableXls() {
+//     $("#table1").table2excel({
+//         exclude: ".excludeThisClass",
+//         name: "Worksheet1",
+//         filename: "file.xls", // do include extension
+//         preserveColors: false // set to true if you want background colors and font colors preserved
+//     });
+// }

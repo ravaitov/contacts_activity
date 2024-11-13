@@ -1,4 +1,6 @@
 function renderDatetimepicker() {
+    d = new Date();
+    d = d.setDate(1);
     $('#datetimepicker1').datetimepicker({
         format: 'YYYY-MM-DD',
         locale: 'ru',
@@ -7,7 +9,7 @@ function renderDatetimepicker() {
         icons: {
             today: 'today-button-pf'
         },
-        defaultDate: new Date()
+        defaultDate: d
     });
 }
 

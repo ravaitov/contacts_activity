@@ -19,8 +19,8 @@ class InputsData extends AbstractApp
     private array $current;
     private array $data;
 
-    private string $noLogin = 'н/и';
-    private string $noInfo = 'н/д КЦ';
+    private string $noLogin = 'н/и';        // !!есть в body.php
+    private string $noInfo = 'н/д КЦ';      // !!есть в body.php
 
     public function run(): void
     {
@@ -74,7 +74,7 @@ class InputsData extends AbstractApp
             if ($this->current[0] == 1 || $this->current[1] == 1) {
                 $total = 1;
                 $this->current[2] = 1;
-            } elseif ($this->current[0] === 0 || $this->current[1] === 0) {
+            } elseif ($this->current[0] === 0 && $this->current[1] === 0) {
                 $total = $total ?: 0;
                 $this->current[2] = 0;
             } else {
@@ -214,6 +214,8 @@ class InputsData extends AbstractApp
     private function fillWeekList(): void
     {
         foreach ($this->result as $item) {
+            if (empty($item['num_week']))
+                continue;
             $this->weekList[$item['num_week']]['data'][] = [
                 'company_id' => $item['company_id'],
                 'product' => [$item['ide_product'], $item['tech_type'], $item['version'],],
