@@ -24,13 +24,15 @@ class XlsxPresenter extends AbstractPresenter
         parent::__construct($data);
 //        $this->log(print_r($data, 1));
 
+
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $this->spreadSheet = $reader->load($this->config->conf('xlsx_tmpl'));
+        $this->sheet = $this->spreadSheet->getSheetByName('данные');
+        $this->templateSheet = $this->spreadSheet->getSheetByName('tmpl');
+
         $this->addStyle('red', 'A2');
         $this->addStyle('ok', 'A1');
 
-        $this->sheet = $this->spreadSheet->getSheetByName('данные');
-        $this->templateSheet = $this->spreadSheet->getSheetByName('tmpl');
 
         $this->fileName = 'report_' . AbstractApp::$params['week'] . '_' . AbstractApp::$params['date'] . '.xlsx';
     }

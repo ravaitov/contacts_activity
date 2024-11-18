@@ -182,7 +182,7 @@ class InputsData extends AbstractApp
     private function getIntputs(): void
     {
         $date = str_replace('-', '', $this->date);
-        $cacheFile = $this->config->conf('stor_dir') . "cache/{$this->weekCnt}_$date";
+        $cacheFile = $this->cacheFile();
         if (is_file($cacheFile)) {
             $this->result = unserialize(file_get_contents($cacheFile));
             return;

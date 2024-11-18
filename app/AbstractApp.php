@@ -59,9 +59,27 @@ class AbstractApp
         return $this->status;
     }
 
+    public function clearCache(): void
+    {
+        $cacheFile = $this->cacheFile();
+        if (unlink($cacheFile)) {
+            $this->log("Удален файл $cacheFile");
+        } else {
+            $this->log("Не удалалось удалить файл $cacheFile");
+        }
+    }
+
     protected function lastDay(string $date, string $suffix = ' 23:59:59'): string
     {
         return date('Y-m-t' . $suffix, strtotime($date));
+    }
+
+    protected function  cacheFile(): string
+    {
+        $date = str_replace('-', '', static::$params['date']);
+        $weekCnt = static::$params['week'];
+
+        return $this->config->conf('stor_dir') . "cache/{$weekCnt}_$date";
     }
 
     protected function validate(): void

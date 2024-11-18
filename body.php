@@ -18,8 +18,8 @@
     </div>
     <div class="col-sm-8">
         <input type="button" value="Скачать xlsx" onclick="tableXls()" id="xlsx">
-<!--        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-<!--        <input type="button" value="Сбросить кэш" onclick="tableXls()" id="xlsx">-->
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="Сбросить кэш" onclick="clearCache()" id="clear">
     </div>
 <!--    <div class="col-sm-10">-->
 <!--        <input type="button" value="Сбросить кэш" onclick="tableXls()" id="xlsx">-->

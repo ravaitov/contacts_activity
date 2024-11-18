@@ -80,3 +80,20 @@ function tableXls() {
     request.send(formData);
 }
 
+function clearCache() {
+    $.ajax({
+        type: "POST",
+        url: "clear_cache.php",
+        dataType: 'text',
+        data: {
+            "week": document.querySelector('#weekpicker').value,
+            "date": $("#datetimepicker1").data('date'),
+        }, success: function (data) {
+            alert('Успешно удалено');
+        },
+        error: function (error) {
+            alert('Ошибка: ' + error.responseText);
+        }
+    });
+}
+
