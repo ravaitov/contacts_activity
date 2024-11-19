@@ -61,15 +61,14 @@ class XlsxPresenter extends AbstractPresenter
                         continue;
                     $row[] = $el;
                 }
+                $warn = $product['ide_product'] == '-';
                 $c = 0;
                 foreach ($row as $val) {
                     $this->sheet->setCellValue([++$c, $y], $val);
+                    if ($c > 9 && $warn)
+                        break;
                 }
-                if ($product['ide_product'] == '-') {
-                    $this->setStyleTemplate('red', [1, $y, $c, $y]);
-                } else {
-                    $this->setStyleTemplate('ok', [1, $y, $c, $y]);
-                }
+                $this->setStyleTemplate($warn ? 'red' : 'ok', [1, $y, $c, $y]);
                 $y++;
             }
         }

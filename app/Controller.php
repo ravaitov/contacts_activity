@@ -14,5 +14,6 @@ class Controller extends AbstractApp
         }
         static::$params = $_REQUEST;
 //        $this->log('static = ' . print_r(static::$params, 1));
+//        $this->log('SERVER = ' . print_r($_SERVER, 1));
     }
 }
