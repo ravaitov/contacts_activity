@@ -51,7 +51,7 @@ class XlsxPresenter extends AbstractPresenter
     private function writeRows(): void
     {
         $cnt = count($this->data['data']);
-        $y = 4;
+        $y = 2;
         for ($i = 0; $i < $cnt; $i++) {
             $rowX = $this->getLeftFields($i);
             foreach ($this->data['data'][$i]['products'] as $product) {
@@ -87,23 +87,19 @@ class XlsxPresenter extends AbstractPresenter
     private function makeTitle(array $weeks): void
     {
         $count = count($weeks);
-        $this->sheet->setCellValue([12, 1], 'недели');
         for ($i = 0; $i < $count; $i++) {
             $this->setWeek(12 + $i * 3, $weeks[$i]);
         }
-        $this->sheet->mergeCells([12, 1, 11 + $count * 3, 1]);
         $this->sheet->setCellValue([12 + $count * 3, 1], 'Итог');
-        $this->sheet->mergeCells([12 + $count * 3, 1, 12 + $count * 3, 3]);
-        $this->setStyle('A1', [12, 1, 12 + $count * 3, 3]);
+        $this->setStyle('A1', [12, 1, 12 + $count * 3, 1]);
     }
 
     private function setWeek(int $x, string $week): void
     {
-        $this->sheet->setCellValue([$x, 2], $week);
-        $this->sheet->mergeCells([$x, 2, $x + 2, 2]);
-        $this->sheet->setCellValue([$x, 3], 'Онлайн');
-        $this->sheet->setCellValue([$x + 1, 3], 'Офлайн');
-        $this->sheet->setCellValue([$x + 2, 3], 'Итог');
+        $this->sheet->setCellValue([$x, 1], $week);
+        $this->sheet->setCellValue([$x, 1], "$week\nОнлайн");
+        $this->sheet->setCellValue([$x + 1, 1], "$week\nОфлайн");
+        $this->sheet->setCellValue([$x + 2, 1], "$week\nИтог");
     }
 
     private function array2str(array $x_y): string
