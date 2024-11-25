@@ -51,13 +51,15 @@ class PivotTable extends AbstractApp
                         'company' => [
                             'web' => "<a onClick=\"jump2Company('$company');\" >" . $this->companyList->result[$company] . "</a>",
                             'name' => $this->companyList->result[$company],
-                            ],
+                            'id' => $company,
+                        ],
                         'group' => $group,
                         'responsible' => $this->servingCompany->result[$company]['responsible'] ?? '',
                         'contact' => [
                             'web' => "<a onClick=\"jump2Contakt('$contact');\" >" . $el['name'] . "</a>",
                             'name' => $el['name'],
-                            ],
+                            'id' => $contact,
+                        ],
                         'manager' => $this->userList->result[$manager] ?? '-',
                         'usage_level' => $el['usage_level'],
                         'influence_level' => $el['influence_level'],
@@ -73,10 +75,11 @@ class PivotTable extends AbstractApp
             $this->result = ['data' => [], 'weeks' => []];
             return;
         }
-        $tr = function (string $x): string {
-            return $x == '-' ? 'ЯЯЯ' : $x;
+
+        $tr = function (array $x): string {
+            return $x['company']['name'] . '|' . $x['contact']['name'];
         };
-        usort($data, fn($a, $b) => $tr($a['manager']) <=> $tr($b['manager']));
+        usort($data, fn($a, $b) => $tr($a) <=> $tr($b));
 
         $this->result = ['data' => $data, 'weeks' => $this->inputsData->weekNums()];
 //        $this->log(print_r($this->result, 1));
@@ -85,7 +88,7 @@ class PivotTable extends AbstractApp
     private function productResult(int $company, int $contact): array
     {
         $del = [];
-        $result = $this->contactComplect234->result[$company][$contact] ?? [$this->contactComplect234->fillProduct()];
+        $result = $this->contactComplect234->result[$company][$contact] ?? [$this->contactComplect234->fillZeroProduct()];
         foreach ($result as $id => &$prod) {
             $weekData = $this->inputsData->weeksInputs(
                 $company,
@@ -95,7 +98,8 @@ class PivotTable extends AbstractApp
                 $prod['login'] ?? '',
                 $prod['fio4ois'] ?? '',
             );
-            if ($weekData && !$this->blocked('ois', $prod['fio4ois'])) {
+//            if ($weekData && !$this->blocked('ois', $prod['fio4ois'])) {
+            if ($weekData) {
                 $prod = array_merge($prod, $weekData);
             } else {
                 $del[] = $id;
@@ -105,6 +109,68 @@ class PivotTable extends AbstractApp
             }
         }
 
+        $userResult = $this->userResult($result);
+        if ($this->blocked('total', $userResult))
+            return [];
+
+        foreach ($result as &$prod) {
+            $prod[] = $userResult;
+        }
+//        $this->log(print_r($result, 1));
+
         return $result;
+    }
+
+    private function userResult(array $result): string
+    {
+        $weekCount = $this->inputsData->weekCount();
+        $this->log("weekCount=$weekCount");
+
+        if (count($result) == 1) {
+            return $result[0][$weekCount * 3];
+        }
+
+        foreach ($result as $prod) { // если один общий итог уже 1
+            if ($prod[$weekCount * 3] == 1)
+                return 1;
+        }
+
+        for ($id = 2, $res = ''; $id < $weekCount * 3; $id += 3) { // в каждой недели есть итог 1
+            foreach ($result as $prod) {
+//                $this->log("prod[$id]=".$prod[$id]);
+                if ($prod[$id] == 1) {
+                    $res = 1;
+                    break;
+                }
+                $res = '';
+            }
+            if ($res != 1) {
+                break;
+            }
+        }
+        $this->log("res=$res");
+        if ($res)
+            return 1;
+
+        $resOk = 1;
+        $resPred = 1;
+        for ($id = 2; $id < $weekCount * 3; $id += 3) { // чередование н/д и 1
+            $res = '';
+            foreach ($result as $prod) {
+                if ($prod[$id] == 1) {
+                    $res = 1;
+                    break;
+                }
+                $res = $res ?: $prod[$id];
+            }
+            if (!$res)
+                return 0;
+            if ($resPred != 1 && $res != 1) {
+                $resOk = $res;
+            }
+            $resPred = $res;
+        }
+        $this->log("resOk=$resOk");
+        return $resOk;
     }
 }

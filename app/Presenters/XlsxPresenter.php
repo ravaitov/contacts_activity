@@ -18,6 +18,7 @@ class XlsxPresenter extends AbstractPresenter
     private Worksheet $templateSheet;
     private array $styles;
 
+    private int $startWeeks = 13;
 
     public function __construct(array $data)
     {
@@ -57,9 +58,9 @@ class XlsxPresenter extends AbstractPresenter
             foreach ($this->data['data'][$i]['products'] as $product) {
                 $row = $rowX;
                 foreach ($product as $key => $el) {
-                    if (in_array($key, ['login', 'fio4ois'])) // скрыть логины
+                    if (in_array($key, ['login'])) // скрыть логины
                         continue;
-                    $row[] = $el;
+                    $row[] = $key == 'fio4ois' ? ($el ? 'да' : 'нет') : $el;
                 }
                 $warn = $product['ide_product'] == '-';
                 $c = 0;
@@ -88,10 +89,12 @@ class XlsxPresenter extends AbstractPresenter
     {
         $count = count($weeks);
         for ($i = 0; $i < $count; $i++) {
-            $this->setWeek(12 + $i * 3, $weeks[$i]);
+            $this->setWeek($this->startWeeks + $i * 3, $weeks[$i]);
         }
-        $this->sheet->setCellValue([12 + $count * 3, 1], 'Итог');
-        $this->setStyle('A1', [12, 1, 12 + $count * 3, 1]);
+        $x = $this->startWeeks + $count * 3;
+        $this->sheet->setCellValue([$x, 1], 'Итог');
+        $this->sheet->setCellValue([$x + 1, 1], "Итог\nпользователя");
+        $this->setStyle('A1', [$this->startWeeks, 1, $x + 1, 1]);
     }
 
     private function setWeek(int $x, string $week): void

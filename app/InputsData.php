@@ -35,6 +35,11 @@ class InputsData extends AbstractApp
         return array_keys($this->weekList);
     }
 
+    public function weekCount(): int
+    {
+        return $this->weekCnt;
+    }
+
     public function weeksInputs(
         int    $company,
         string $prodName,
@@ -50,6 +55,8 @@ class InputsData extends AbstractApp
         $this->techType = $techType;
         $this->login = $login;
         $this->fioOv = $fioOv;
+
+//        $noInfo = [$this->noInfo, $this->noLogin];
 
         $result = [];
         $total = null;
@@ -75,8 +82,15 @@ class InputsData extends AbstractApp
                 $total ??= 1;
                 $this->current[2] = 1;
             } elseif ((string)$this->current[0] === '0' || (string)$this->current[1] === '0') {
-                $total = 0;
-                $this->current[2] = 0;
+                $res = $this->noInfo($this->current[0]) ?: $this->noInfo($this->current[1]);
+                if ($res) {
+                    $total ??= $res;
+                    $this->current[2] = $res;
+                }
+                else {
+                    $total = 0;
+                    $this->current[2] = 0;
+                }
             } else {
                 $this->current[2] = $this->current[0] ?: $this->current[1];
                 $total ??= $this->current[2];
@@ -85,10 +99,15 @@ class InputsData extends AbstractApp
         }
         $result[] = $total;
 
-        if ($this->blocked('total', $total))
-            return [];
+//        if ($this->blocked('total', $total))
+//            return [];
 
         return $result;
+    }
+
+    private function noInfo(string $current): string
+    {
+        return $current === $this->noLogin ? $this->noLogin : ($current === $this->noInfo ? $this->noInfo : '');
     }
 
     private function processingLoginOVM(): void  //ОВМ
@@ -134,7 +153,7 @@ class InputsData extends AbstractApp
         foreach ($list as $i) {
             $el = $this->data['data'][$i];
             if ($el['tag']) { // online
-                if ($this->getLogin() ==  $el['login']) {
+                if ($this->getLogin() == $el['login']) {
                     $this->current[0] = $el['cnt'] ? 1 : 0;
                 }
             }

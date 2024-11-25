@@ -103,7 +103,7 @@ class AbstractApp
         return substr($result, 0, -1);
     }
 
-    protected function blocked(string $key, string|int $val = 'default'): bool
+    protected function blocked(string $key, string|int $val = 'default'): bool // фильтр
     {
         if (!isset(static::$params[$key]) || static::$params[$key] === 'default')
             return false;

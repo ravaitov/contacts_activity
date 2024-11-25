@@ -23,7 +23,7 @@ class WebPresenter extends AbstractPresenter
         }
         $cnt = count($this->data['weeks']);
         $cols = $cnt * 3;
-        $res .= "<th colspan='$cols'>недели</th>\n<th  rowspan='3'>&nbsp;&nbsp;Итог&nbsp;&nbsp;</tr>\n<tr>\n";
+        $res .= "<th colspan='$cols'>недели</th>\n<th rowspan='3'>&nbsp;&nbsp;Итог&nbsp;&nbsp;</th><th rowspan='3'>Итог пользователя</th>\n</tr>\n";
         foreach ($this->data['weeks'] as $week) {
             $res .= "<th colspan='3'>$week</th>";
         }

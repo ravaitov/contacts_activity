@@ -14,7 +14,7 @@ function send() {
             "date": $("#datetimepicker1").data('date'),
             "sds": $("#sds")[0].value,
             "contact": $("#contact")[0].value,
-            "ois": $("#ois")[0].value,
+            // "ois": $("#ois")[0].value,
             "total": $("#total")[0].value,
             "dis": $("#dis")[0].value,
             "group": $("#group")[0].value,
@@ -47,7 +47,7 @@ function tableXls() {
     formData.append('date', date);
     formData.append('sds', $("#sds")[0].value);
     formData.append('contact', $("#contact")[0].value);
-    formData.append('ois', $("#ois")[0].value);
+    // formData.append('ois', $("#ois")[0].value);
     formData.append('total', $("#total")[0].value);
     formData.append('dis', $("#dis")[0].value);
     formData.append('group', $("#group")[0].value);

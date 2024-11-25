@@ -30,12 +30,12 @@ class ContactComplect234 extends AbstractApp
         foreach ($res as $el) {
             if (empty($el['company_id']) || empty($el['contact_id']))
                 continue;
-            $this->result[$el['company_id']][$el['contact_id']][] = $this->fillProduct($el);
+            $this->result[$el['company_id']][$el['contact_id']][] = $this->fillZeroProduct($el);
         }
 //        print_r($this->result);
     }
 
-    public function fillProduct(array $product = []): array
+    public function fillZeroProduct(array $product = []): array
     {
         return [
             'ide_product' => $product['ide_product'] ?? '-',
