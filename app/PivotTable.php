@@ -124,7 +124,7 @@ class PivotTable extends AbstractApp
     private function userResult(array $result): string
     {
         $weekCount = $this->inputsData->weekCount();
-        $this->log("weekCount=$weekCount");
+//        $this->log("weekCount=$weekCount");
 
         if (count($result) == 1) {
             return $result[0][$weekCount * 3];
@@ -148,7 +148,7 @@ class PivotTable extends AbstractApp
                 break;
             }
         }
-        $this->log("res=$res");
+//        $this->log("res=$res");
         if ($res)
             return 1;
 
@@ -170,7 +170,7 @@ class PivotTable extends AbstractApp
             }
             $resPred = $res;
         }
-        $this->log("resOk=$resOk");
+//        $this->log("resOk=$resOk");
         return $resOk;
     }
 }

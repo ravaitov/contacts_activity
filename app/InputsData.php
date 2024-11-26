@@ -78,6 +78,8 @@ class InputsData extends AbstractApp
                 default:
                     $this->processingOther();
             }
+            if (in_array($this->techType, ['лок', 'с/м']))
+                $this->current[0] = '';
             if ($this->current[0] == 1 || $this->current[1] == 1) {
                 $total ??= 1;
                 $this->current[2] = 1;
@@ -86,8 +88,7 @@ class InputsData extends AbstractApp
                 if ($res) {
                     $total ??= $res;
                     $this->current[2] = $res;
-                }
-                else {
+                } else {
                     $total = 0;
                     $this->current[2] = 0;
                 }
@@ -154,7 +155,7 @@ class InputsData extends AbstractApp
             $el = $this->data['data'][$i];
             if ($el['tag']) { // online
                 if ($this->getLogin() == $el['login']) {
-                    $this->current[0] = $el['cnt'] ? 1 : 0;
+                    $this->current[0] = $this->current[0] ?: ($el['cnt'] ? 1 : 0);
                 }
             }
         }
@@ -170,10 +171,10 @@ class InputsData extends AbstractApp
             $el = $this->data['data'][$i];
             if ($el['tag']) { // online
                 if ($this->getLogin() == explode('#', $el['login'])[0]) {
-                    $this->current[0] = $el['cnt'] ? 1 : 0;
+                    $this->current[0] = $this->current[0] ?: ($el['cnt'] ? 1 : 0);
                 }
             } else { // offlint
-                $this->current[1] = $el['cnt'] ? 1 : 0;
+                $this->current[1] = $this->current[1] ?: ($el['cnt'] ? 1 : 0);
             }
             $this->current = array_map(fn($x) => $x === '' ? $this->noInfo : $x, $this->current);
         }
