@@ -16,6 +16,7 @@ class InputsData extends AbstractApp
     private string $login;
     private string $fioOv;
 
+    private array $companyComplect;
     private array $current;
     private array $data;
 
@@ -62,6 +63,7 @@ class InputsData extends AbstractApp
         $total = null;
         foreach ($this->weekList as $week => $this->data) {
             $this->current = ['', '', ''];
+            $this->companyComplect = $this->data['company_complect'][$this->company . '_' . $this->complect] ?? [];
             switch ($techType) {
                 case '':
                     break;
@@ -78,10 +80,13 @@ class InputsData extends AbstractApp
                 default:
                     $this->processingOther();
             }
-            if (in_array($this->techType, ['лок', 'с/м']))
+            if ($this->data['data'][$this->companyComplect[0]]['product'][3]) {// not_online
                 $this->current[0] = '';
+//                $this->log('not_online. id=' . $this->company);
+            }
             if ($this->current[0] == 1 || $this->current[1] == 1) {
-                $total ??= 1;
+                if ((string)$total !== '0')
+                    $total = 1;
                 $this->current[2] = 1;
             } elseif ((string)$this->current[0] === '0' || (string)$this->current[1] === '0') {
                 $res = $this->noInfo($this->current[0]) ?: $this->noInfo($this->current[1]);
@@ -104,6 +109,11 @@ class InputsData extends AbstractApp
 //            return [];
 
         return $result;
+    }
+
+    private function notOnline(): bool
+    {
+
     }
 
     private function noInfo(string $current): string
@@ -147,11 +157,11 @@ class InputsData extends AbstractApp
 
     private function processingOVP(): void //ОВП
     {
-        if (!$list = $this->data['company_complect'][$this->company . '_' . $this->complect] ?? []) {
+        if (!$this->companyComplect) {
             $this->current = [$this->noInfo, $this->noInfo, $this->noInfo,];
             return;
         }
-        foreach ($list as $i) {
+        foreach ($this->companyComplect as $i) {
             $el = $this->data['data'][$i];
             if ($el['tag']) { // online
                 if ($this->getLogin() == $el['login']) {
@@ -163,21 +173,21 @@ class InputsData extends AbstractApp
 
     private function processingOther(): void //И-В,ОВК,ОВК-Ф,ОВМ,ОВМ2,ОВМ3,ОВМ-Ф
     {
-        if (!$list = $this->data['company_complect'][$this->company . '_' . $this->complect] ?? []) {
+        if (!$this->companyComplect) {
             $this->current = [$this->noInfo, $this->noInfo, $this->noInfo,];
             return;
         }
-        foreach ($list as $i) {
+        foreach ($this->companyComplect as $i) {
             $el = $this->data['data'][$i];
             if ($el['tag']) { // online
                 if ($this->getLogin() == explode('#', $el['login'])[0]) {
                     $this->current[0] = $this->current[0] ?: ($el['cnt'] ? 1 : 0);
                 }
-            } else { // offlint
+            } else { // offline
                 $this->current[1] = $this->current[1] ?: ($el['cnt'] ? 1 : 0);
             }
-            $this->current = array_map(fn($x) => $x === '' ? $this->noInfo : $x, $this->current);
         }
+        $this->current = array_map(fn(string $x) => $x === '' ? $this->noInfo : $x, $this->current);
     }
 
     private function getLogin(): string
@@ -214,6 +224,7 @@ class InputsData extends AbstractApp
             	IdeProdukt ide_product,
             	IdeTechType tech_type,
             	IdeVer 'version',
+            	signNotOnline not_online,
             	NumWeek num_week,
             	NumYear num_year,
             	cnt,
@@ -238,7 +249,7 @@ class InputsData extends AbstractApp
                 continue;
             $this->weekList[$item['num_week']]['data'][] = [
                 'company_id' => $item['company_id'],
-                'product' => [$item['ide_product'], $item['tech_type'], $item['version'],],
+                'product' => [$item['ide_product'], $item['tech_type'], $item['version'],$item['not_online'],],
                 'cnt' => $item['cnt'],
                 'login' => $item['login'],
                 'fio_ov' => $item['fio_ov'],

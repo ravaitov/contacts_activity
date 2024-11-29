@@ -44,6 +44,9 @@ class PivotTable extends AbstractApp
                     || $this->blocked('contact', $contact)
                     || $this->blocked('dis', $manager == '-' ? 'нет' : 'да')
                     || $this->blocked('group', $group)
+//                    || !in_array($company, [965,966,1023,1026]) // debug
+//                    || !in_array($company, [1026, 965]) // debug
+//                    || !in_array($company, [1026]) // debug
                 )
                     continue;
                 if ($product = $this->productResult($company, $contact)) {
@@ -75,6 +78,7 @@ class PivotTable extends AbstractApp
             $this->result = ['data' => [], 'weeks' => []];
             return;
         }
+//        $this->log(print_r($data, 1));
 
         $tr = function (array $x): string {
             return $x['company']['name'] . '|' . $x['contact']['name'];
@@ -109,6 +113,8 @@ class PivotTable extends AbstractApp
             }
         }
 
+//        $this->log(print_r($result, 1));
+
         $userResult = $this->userResult($result);
         if ($this->blocked('total', $userResult))
             return [];
@@ -123,6 +129,7 @@ class PivotTable extends AbstractApp
 
     private function userResult(array $result): string
     {
+//        $this->log(print_r($result, 1));
         $weekCount = $this->inputsData->weekCount();
 //        $this->log("weekCount=$weekCount");
 
@@ -135,7 +142,8 @@ class PivotTable extends AbstractApp
                 return 1;
         }
 
-        for ($id = 2, $res = ''; $id < $weekCount * 3; $id += 3) { // в каждой недели есть итог 1
+        // в каждой недели есть итог 1
+        for ($id = 2, $res = ''; $id < $weekCount * 3; $id += 3) {
             foreach ($result as $prod) {
 //                $this->log("prod[$id]=".$prod[$id]);
                 if ($prod[$id] == 1) {
@@ -152,9 +160,10 @@ class PivotTable extends AbstractApp
         if ($res)
             return 1;
 
-        $resOk = 1;
-        $resPred = 1;
-        for ($id = 2; $id < $weekCount * 3; $id += 3) { // чередование н/д и 1
+        // чередование н/д и 1
+        $resOk = 1;   // текущий результат
+        $resPred = 1; // предыдущий результат
+        for ($id = 2; $id < $weekCount * 3; $id += 3) {
             $res = '';
             foreach ($result as $prod) {
                 if ($prod[$id] == 1) {
