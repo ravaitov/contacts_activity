@@ -20,8 +20,8 @@ class InputsData extends AbstractApp
     private array $current;
     private array $data;
 
-    private string $noLogin = 'н/и';        // !!есть в body.php
-    private string $noInfo = 'н/д КЦ';      // !!есть в body.php
+    public string $noLogin = 'н/и';        // !!есть в body.php
+    public string $noInfo = 'н/д КЦ';      // !!есть в body.php
 
     public function run(): void
     {
@@ -80,7 +80,7 @@ class InputsData extends AbstractApp
                 default:
                     $this->processingOther();
             }
-            if ($this->data['data'][$this->companyComplect[0]]['product'][3]) {// not_online
+            if ($this->data['data'][$this->companyComplect[0]]['product'][3] ?? 1) {// not_online
                 $this->current[0] = '';
 //                $this->log('not_online. id=' . $this->company);
             }

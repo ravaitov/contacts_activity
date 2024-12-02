@@ -42,7 +42,7 @@ class PivotTable extends AbstractApp
                 if (
                     $this->blocked('sds', $manager)
                     || $this->blocked('contact', $contact)
-                    || $this->blocked('dis', $manager == '-' ? 'нет' : 'да')
+                    || $this->blocked('dis', ($manager ?? '-') == '-' ? 'нет' : 'да')
                     || $this->blocked('group', $group)
 //                    || !in_array($company, [965,966,1023,1026]) // debug
 //                    || !in_array($company, [1026, 965]) // debug
@@ -129,12 +129,11 @@ class PivotTable extends AbstractApp
 
     private function userResult(array $result): string
     {
-//        $this->log(print_r($result, 1));
         $weekCount = $this->inputsData->weekCount();
-//        $this->log("weekCount=$weekCount");
+        $rowCount = count($result);
 
-        if (count($result) == 1) {
-            return $result[0][$weekCount * 3];
+        if ($result[0]['ide_product'] == '-') { //Нет привязки
+            return '';
         }
 
         foreach ($result as $prod) { // если один общий итог уже 1
@@ -142,44 +141,24 @@ class PivotTable extends AbstractApp
                 return 1;
         }
 
-        // в каждой недели есть итог 1
-        for ($id = 2, $res = ''; $id < $weekCount * 3; $id += 3) {
-            foreach ($result as $prod) {
-//                $this->log("prod[$id]=".$prod[$id]);
-                if ($prod[$id] == 1) {
-                    $res = 1;
-                    break;
-                }
-                $res = '';
+        for ($id = 2, $res1 = $noLogin = $noInfo = 0; $id < $weekCount * 3; $id += 3) { // цикл по итогам (горизонтальн)
+            for ($row = 0, $res0 = 0; $row < $rowCount; $row++) { // цикл по строкам (вертикально)
+                $x = (string)$result[$row][$id];
+                if ($x === '0')
+                    $res0++;
+                elseif ($x == 1)
+                    $res1 = 1;
+                elseif ($x == $this->inputsData->noLogin)
+                    $noLogin++;
+                elseif ($x == $this->inputsData->noInfo)
+                    $noInfo++;
             }
-            if ($res != 1) {
-                break;
-            }
+            if ($res0 == $rowCount) // есть сквозной 0
+                return 0;
         }
-//        $this->log("res=$res");
-        if ($res)
+        if ($res1)
             return 1;
 
-        // чередование н/д и 1
-        $resOk = 1;   // текущий результат
-        $resPred = 1; // предыдущий результат
-        for ($id = 2; $id < $weekCount * 3; $id += 3) {
-            $res = '';
-            foreach ($result as $prod) {
-                if ($prod[$id] == 1) {
-                    $res = 1;
-                    break;
-                }
-                $res = $res ?: $prod[$id];
-            }
-            if (!$res)
-                return 0;
-            if ($resPred != 1 && $res != 1) {
-                $resOk = $res;
-            }
-            $resPred = $res;
-        }
-//        $this->log("resOk=$resOk");
-        return $resOk;
+        return $noLogin > $noInfo ? $this->inputsData->noLogin : $this->inputsData->noInfo;
     }
 }
