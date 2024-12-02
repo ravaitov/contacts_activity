@@ -102,15 +102,14 @@ class PivotTable extends AbstractApp
                 $prod['login'] ?? '',
                 $prod['fio4ois'] ?? '',
             );
-//            if ($weekData && !$this->blocked('ois', $prod['fio4ois'])) {
             if ($weekData) {
                 $prod = array_merge($prod, $weekData);
             } else {
                 $del[] = $id;
             }
-            foreach ($del as $id) {
-                unset($result[$id]);
-            }
+        }
+        foreach ($del as $id) {
+            unset($result[$id]);
         }
 
 //        $this->log(print_r($result, 1));
@@ -127,7 +126,7 @@ class PivotTable extends AbstractApp
         return $result;
     }
 
-    private function userResult(array $result): string
+    private function userResult(array $result): string // Итог пользователя
     {
         $weekCount = $this->inputsData->weekCount();
         $rowCount = count($result);
