@@ -140,24 +140,26 @@ class PivotTable extends AbstractApp
                 return 1;
         }
 
-        for ($id = 2, $res1 = $noLogin = $noInfo = 0; $id < $weekCount * 3; $id += 3) { // цикл по итогам (горизонтальн)
-            for ($row = 0, $res0 = 0; $row < $rowCount; $row++) { // цикл по строкам (вертикально)
+        for ($id = 2, $res1Count = $noLoginCount = $noInfoCount = 0; $id < $weekCount * 3; $id += 3) { // цикл по итогам (горизонтальн)
+            for ($row = 0, $res1 = $zeroCount = 0; $row < $rowCount; $row++) { // цикл по строкам (вертикально)
                 $x = (string)$result[$row][$id];
                 if ($x === '0')
-                    $res0++;
+                    $zeroCount++;
                 elseif ($x == 1)
-                    $res1 = 1;
+                    $res1 = $res1 ?: 1;
                 elseif ($x == $this->inputsData->noLogin)
-                    $noLogin++;
+                    $noLoginCount++;
                 elseif ($x == $this->inputsData->noInfo)
-                    $noInfo++;
+                    $noInfoCount++;
             }
-            if ($res0 == $rowCount) // есть сквозной 0
+            if ($zeroCount == $rowCount) // есть сквозной 0
                 return 0;
+
+            $res1Count += $res1;
         }
-        if ($res1)
+        if ($res1Count == $rowCount)
             return 1;
 
-        return $noLogin > $noInfo ? $this->inputsData->noLogin : $this->inputsData->noInfo;
+        return $noLoginCount > $noInfoCount ? $this->inputsData->noLogin : $this->inputsData->noInfo;
     }
 }
