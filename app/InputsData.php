@@ -80,9 +80,8 @@ class InputsData extends AbstractApp
                 default:
                     $this->processingOther();
             }
-            if ($this->data['data'][$this->companyComplect[0]]['product'][3] ?? 1) {// not_online
+            if ($this->data['data'][$this->companyComplect[0]]['product'][3] ?? 1) {// not_online поле
                 $this->current[0] = '';
-//                $this->log('not_online. id=' . $this->company);
             }
             if ($this->current[0] == 1 || $this->current[1] == 1) {
                 if ((string)$total !== '0')
@@ -104,9 +103,6 @@ class InputsData extends AbstractApp
             $result = array_merge($result, $this->current);
         }
         $result[] = $total;
-
-//        if ($this->blocked('total', $total))
-//            return [];
 
         return $result;
     }

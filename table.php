@@ -7,12 +7,12 @@ use App\Presenters\XlsxPresenter;
 use App\Presenters\WebPresenter;
 
 try {
-    Logger::instance()->log(print_r($_POST, 1));
+    Logger::instance()->log("\n\n" . print_r($_POST, 1));
     (new \App\Controller())->run();
     $pt = new PivotTable();
     $pt->run();
 
-    $presenter = empty($pt::$params['xlsx']) ? new WebPresenter($pt->result) :  new XlsxPresenter($pt->result);
+    $presenter = empty($pt::$params['xlsx']) ? new WebPresenter($pt->result) : new XlsxPresenter($pt->result);
     $presenter->sendTable();
 } catch (Throwable $t) {
     terminateError($t);

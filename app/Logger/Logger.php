@@ -32,7 +32,6 @@ class Logger
             $this->logConsole($log);
         }
         $this->logFile($log);
-//        return; // test
         if (isset($this->logDataBase) && in_array($level, Config::LOG_DB)) {
             $this->logDataBase->log($log, $level);
         }

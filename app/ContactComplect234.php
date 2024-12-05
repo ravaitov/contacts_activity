@@ -41,7 +41,6 @@ class ContactComplect234 extends AbstractApp
             'ide_product' => $product['ide_product'] ?? '-',
             'complect' => $product ? $product['complect'] : 'Нет привязки',
             'version' => $product['version'] ?? '',
-//                'net_type' => $product['net_type'] ?? '',
             'tech_type' => $product['tech_type'] ?? '',
             'login' => $product['login'] ?? '',
             'fio4ois' => $product['fio4ois'] ?? '',

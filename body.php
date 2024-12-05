@@ -29,7 +29,6 @@
         <?php
         (new \App\Filter('sds', 'СДС', new \App\UserDIS()))->run('-');
         (new \App\Filter('contact', 'Контакты', new \App\TransferredContact()))->run();
-//        (new \App\Filter('ois', 'ОИС', ['оис']))->run();
         (new \App\Filter('total', 'Итог', ['0', '1', 'н/и' => 'н/и', 'н/д КЦ' => 'н/д КЦ']))->run();
         (new \App\Filter('dis', 'Передан на ДиС', ['да' => 'да', 'нет' => 'нет']))->run();
         (new \App\Filter('group', 'Группы', new \App\GroupList()))->run();

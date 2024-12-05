@@ -38,7 +38,7 @@ class AbstractApp
 
     public function __destruct()
     {
-        $this->log('<<< Завершение: ' . $this->appName . "\n");
+        $this->log('<<< Завершение: ' . $this->appName);
     }
 
     public function run(): void

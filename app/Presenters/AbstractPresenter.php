@@ -15,11 +15,9 @@ class AbstractPresenter
         'manager' => 'Менеджер',
         'usage_level' => 'Уровень использования К+',
         'influence_level' => 'Уровень влияния',
-//        'products' => '',
         'ide_product' => 'Сокращенное название',
         'complect' => 'Комплект',
         'version' => 'Версия',
-//        'net_type' => 'Сетевитость',
         'tech_type' => 'Тех. тип',
 //        'login' => 'Логин (онлайн)',  // скрыть логин
 //        'fio4ois' => 'ФИО (для ОИС)', // скрыть логин
@@ -34,8 +32,16 @@ class AbstractPresenter
     {
         $this->config = Config::instance();
         $this->logger = Logger::instance();
+        $a = explode('\\', get_class($this));
+        $this->appName = end($a);
+        $this->log(">>> Старт: " . $this->appName . '. V=' . $this->config->conf('version'));
         $this->data = $data;
         $this->colNums = count($this->fieldMapper);
+    }
+
+    public function __destruct()
+    {
+        $this->log('<<< Завершение: ' . $this->appName);
     }
 
     public function sendTable(): void
