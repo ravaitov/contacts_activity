@@ -1,6 +1,6 @@
 <?php
 return function ($url) {
-    $location = "Location: https://bitrix.zemser.ru/local/b24_scripts/b24.php?url=$url";
+    $location = "Location: https://bitrix.zemser.team/local/b24_scripts/b24.php?url=$url";
     if (!$_GET) {
         Header("HTTP 302 Found");
         Header($location);

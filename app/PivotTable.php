@@ -157,7 +157,7 @@ class PivotTable extends AbstractApp
 
             $res1Count += $res1;
         }
-        if ($res1Count == $rowCount)
+        if ($res1Count == $weekCount) // на каждой недели был вход
             return 1;
 
         return $noLoginCount > $noInfoCount ? $this->inputsData->noLogin : $this->inputsData->noInfo;

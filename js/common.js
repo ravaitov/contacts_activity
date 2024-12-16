@@ -80,11 +80,11 @@ function jump(id) {
 }
 
 function jump2Company(id) {
-    window.open('https://bitrix.zemser.ru/crm/company/details/' + id + '/', "_blank");
+    window.open('https://bitrix.zemser.team/crm/company/details/' + id + '/', "_blank");
 }
 
 function jump2Contakt(id) {
-    window.open('https://bitrix.zemser.ru/crm/contact/details/' + id + '/', "_blank");
+    window.open('https://bitrix.zemser.team/crm/contact/details/' + id + '/', "_blank");
 }
 
 // function tableXls() {
